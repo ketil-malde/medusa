@@ -3,7 +3,9 @@ element meta {
    attribute version { text },  # metadata version, bump on update
    element files { element file { 
        attribute path { text }, # file name, path relative to current dir
-       attribute md5 { text },  # md5 checksum
+       attribute md5 {          # md5 checksum
+         xsd:string { pattern = "[a-f0-9]*" length = "32" }
+       },
        attribute mimetype { text }  # mime-type of the file (e.g. text/plain)
    }*
  }
