@@ -1,0 +1,6 @@
+<meta id="test" version="0">
+  <files>
+    <file path="test.fasta" md5="abcdef01234" mimetype="text/x-fasta-rna" />
+    <file path="test2.fna" md5="abcdef01234" mimetype="text/x-fasta-dna" />
+  </files>
+</meta>

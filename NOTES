@@ -1,0 +1,14 @@
+
+## xmlstarlet can grep in xml documents, and produce fairly flexible output:
+
+% xmlstarlet sel -t -m "//file" -o "Yo: " -v "@path" -n meta.xml 
+Yo: test.fasta
+Yo: test2.fna
+
+xmlstarlet sel -t -m "//file[@path='test.fasta']" -o "Yo: " -v "@mimetype" -n meta.xml 
+Yo: text/x-fasta-rna
+
+## Regular expressions to specify element contents
+
+zip = xsd:string { pattern='[0-9]{5}(-[0-9]{4})?' }
+
