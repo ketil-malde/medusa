@@ -6,7 +6,9 @@
   <!-- file list -->
   <files>
     <file path="test.fasta" md5="abcdef0123467879abcdef0123467879" mimetype="text/x-fasta-rna" />
-    <file path="test2.fna" md5="abcdef0123467879abcdef0123467879" mimetype="text/x-fasta-dna" />
+    <file path="test2.fna" md5="abcdef0123467879abcdef0123467879" mimetype="text/x-fasta-dna">
+      This file contains some DNA sequences from the froobnash glob.
+    </file>
   </files>
 
 </meta>

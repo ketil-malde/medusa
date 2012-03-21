@@ -6,7 +6,8 @@ element meta {
        attribute md5 {          # md5 checksum
          xsd:string { pattern = "[a-f0-9]*" length = "32" }
        },
-       attribute mimetype { text }  # mime-type of the file (e.g. text/plain)
+       attribute mimetype { text },  # mime-type of the file (e.g. text/plain)
+       text
    }*
  }
 }
