@@ -1,6 +1,12 @@
 <meta id="test" version="0">
+  <!-- general description of data set -->
+
+  <!-- data set provenance and relationships -->
+
+  <!-- file list -->
   <files>
     <file path="test.fasta" md5="abcdef0123467879abcdef0123467879" mimetype="text/x-fasta-rna" />
     <file path="test2.fna" md5="abcdef0123467879abcdef0123467879" mimetype="text/x-fasta-dna" />
   </files>
+
 </meta>
