@@ -30,6 +30,7 @@ freetext = ( text
 	     }
            | element person { text }
            | element location { text }
+	   | element dataset { attribute id { text }, attribute rel { text}, text }
 	   )*
 
 mime_t = text

@@ -41,4 +41,10 @@ for a in `cd $D && find . | sed -e 's/^\.\///g' | grep -v meta.xml`; do
     echo $FILES | grep -q $a || warn "File $a not mentioned in $M"
 done
 
+echo "Checking links:"
+LINKS=`xmlstarlet sel -t -m "//dataset" -v "@id" -n $M`
+for a in $LINKS; do
+  [ -d $a ] || warn "Dataset $a referenced, but not found"
+done
+
 echo "XMLcheck: $D is okay"
