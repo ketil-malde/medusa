@@ -1,5 +1,31 @@
 
-## xmlstarlet can grep in xml documents, and produce fairly flexible output:
+## Interfaces!
+
+UPLOADER: Web form, upload files, text box entry
+  JS: look up species names, persons, etc, and suggest automatic tagging
+
+VALDIATOR: valdiate xml, check contents, look for possible mistakes
+
+QUERY: accept text queries, suggest refinements based on available data
+  (i.e. typing "salmon" suggest //species[@tsn:12345]) <- show num hits
+  recognize persons, locations, etc.)
+
+  Browse data set relationships.
+
+RSS - provide feed with incoming data sets
+
+## Contents
+
+Unresolved issues:
+
+- Citation and other related publications...
+- People, institutes/affiliations, projects...
+- Geographical regions, locations... (and how do we search them?)
+- ...
+
+## More notes:
+
+# xmlstarlet can grep in xml documents, and produce fairly flexible output:
 
 % xmlstarlet sel -t -m "//file" -o "Yo: " -v "@path" -n meta.xml 
 Yo: test.fasta
@@ -8,7 +34,7 @@ Yo: test2.fna
 xmlstarlet sel -t -m "//file[@path='test.fasta']" -o "Yo: " -v "@mimetype" -n meta.xml 
 Yo: text/x-fasta-rna
 
-## Regular expressions to specify element contents
+# Regular expressions to specify element contents
 
 zip = xsd:string { pattern='[0-9]{5}(-[0-9]{4})?' }
 
