@@ -18,8 +18,11 @@ echo "XMLcheck: checking $D"
 [ -f $D/meta.xml ] || error "Couldn't find $D/meta.xml"
 M=$D/meta.xml
 
+# convert to RNG:
+trang meta.rnc meta.rng
+
 # validate the XML against schema
-xmlstarlet val -r meta.rng $M
+xmlstarlet val -e -r meta.rng $M || error "$M failed to validate."
 
 # Check files exist, checksums, file types
 echo "Checking files:"
