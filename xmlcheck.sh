@@ -35,4 +35,8 @@ for f in $FILES; do
   grep -q '^\$type$' mimetypes.txt || warn "$f has unknown mimetype $type"
 done
 
+for a in `cd $D && find . | grep -v meta.xml`; do
+    echo $FILES | grep -q $a || warn "File $a not mentioned in $M"
+done
+
 echo "XMLcheck: $D is okay"
