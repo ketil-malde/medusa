@@ -1,0 +1,3 @@
+text/x-fasta-rna
+text/x-fasta-dna
+text/x-fasta-prot
