@@ -1,14 +1,19 @@
 <meta id="test" version="0">
   <!-- general description of data set -->
-
+  <description>
+    Something data from the <species tsn="89113" sciname="Lepeophtheirus salmonis">salmon louse</species>.
+  </description>
   <!-- data set provenance and relationships -->
-
+  <provenance>
+    Data set invented on the fly. Should specify input data sets, and scripts/programs used.  Dates, maybe?  <person />.
+    Should be be able to say this data set supersedes another?
+  </provenance>
   <!-- file list -->
-  <files>
-    <file path="test.fasta" md5="abcdef0123467879abcdef0123467879" mimetype="text/x-fasta-rna" />
+  <contents>
+    <file path="test.fasta" md5="d41d8cd98f00b204e9800998ecf8427e" mimetype="text/x-fasta-rna" />
     <file path="test2.fna" md5="abcdef0123467879abcdef0123467879" mimetype="text/x-fasta-dna">
       This file contains some DNA sequences from the froobnash glob.
     </file>
-  </files>
+  </contents>
 
 </meta>
