@@ -30,7 +30,8 @@ freetext = ( text
 	     }
            | element person { text }
            | element location { text }
-	   | element dataset { attribute id { text }, attribute rel { text}, text }
+	   | element dataset { attribute id { text }, attribute rel { rel }?, text }
 	   )*
 
 mime_t = text
+rel    = "subsumes" | "supersedes" | "uses"
