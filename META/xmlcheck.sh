@@ -1,10 +1,11 @@
 #!/bin/bash
 
 META=META
+ERROR=0
 
 error(){
     echo ERROR: $*
-    exit -1
+    ERROR=1
 }
 
 warn(){
@@ -34,7 +35,7 @@ for f in $FILES; do
   md5=`xmlstarlet sel -t -m "//file[@path='$f']" -v "@md5" -n $M`
   cd $D; echo "$md5  $f" | md5sum -c 2> /dev/null || error "Checksum mismatch for $f"; cd -
   type=`xmlstarlet sel -t -m "//file[@path='$f']" -v "@mimetype" -n $M`
-  grep -q '^\$type$' $META/mimetypes.txt || warn "$f has unknown mimetype $type"
+  grep -q "^$type\$" $META/mimetypes.txt || warn "$f has unknown mimetype $type"
 done
 
 for a in `cd $D && find . | sed -e 's/^\.\///g' | grep -v meta.xml`; do
@@ -47,4 +48,9 @@ for a in $LINKS; do
   [ -d $a ] || warn "Dataset $a referenced, but not found"
 done
 
-echo "XMLcheck: $D is okay"
+if [ $ERROR -eq "0" ]; then 
+  echo "XMLcheck: $D is okay"
+else
+  echo "Errors occured"
+  exit -1
+fi
