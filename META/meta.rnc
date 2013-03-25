@@ -6,7 +6,7 @@ start = element meta
     , contents
 }
 
-version = xsd:string { pattern = "0" }
+version = xsd:string { pattern = "[1-9][0-9]*" } # serial number
 
 description = element description { freetext }
 
