@@ -3,13 +3,19 @@
 META=META
 ERROR=0
 
+# Colors
+R="$(tput setaf 1)"
+G="$(tput setaf 2)"
+Y="$(tput setaf 3)"
+N="$(tput sgr0)"
+
 error(){
-    echo ERROR: $*
+    echo ${R}ERROR:${N} $*
     ERROR=1
 }
 
 warn(){
-    echo WARNING: $*
+    echo ${Y}WARNING:${N} $*
 }
 
 # Check a data set (directory) if it conforms to conventions
@@ -49,8 +55,8 @@ for a in $LINKS; do
 done
 
 if [ $ERROR -eq "0" ]; then 
-  echo "XMLcheck: $D is okay"
+  echo "${G}XMLcheck: $D is okay${N}"
 else
-  echo "Errors occured"
+  echo "${R}Errors occured${N}"
   exit -1
 fi
