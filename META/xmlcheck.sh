@@ -39,7 +39,11 @@ FILES=`xmlstarlet sel -t -m "//file" -v "@path" -n $M`
 for f in $FILES; do
   [ -f $D/$f ] || error "File $f not found."
   md5=`xmlstarlet sel -t -m "//file[@path='$f']" -v "@md5" -n $M`
-  cd $D; echo "$md5  $f" | md5sum -c 2> /dev/null || error "Checksum mismatch for $f"; cd -
+  if [ -z ${QUICK+x} ]; then
+     cd $D; echo "$md5  $f" | md5sum -c 2> /dev/null || error "Checksum mismatch for $f"; cd -
+  else
+     echo "quick mode: skipping checksumming for $f"
+  fi
   type=`xmlstarlet sel -t -m "//file[@path='$f']" -v "@mimetype" -n $M`
   grep -q "^$type\$" $META/mimetypes.txt || warn "$f has unknown mimetype $type"
 done
