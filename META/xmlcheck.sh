@@ -48,18 +48,20 @@ for f in $FILES; do
   grep -q "^$type\$" $META/mimetypes.txt || warn "$f has unknown mimetype $type"
 done
 
-RFILES=`cd $D && find . | sed -e 's/^\.\///g' | grep -v '^.$' | grep -v meta.xml`
-for a in $RFILES; do
+if [ -f $M ]; then
+  RFILES=`cd $D && find . | sed -e 's/^\.\///g' | grep -v '^.$' | grep -v meta.xml`
+  for a in $RFILES; do
     echo $FILES | grep -q $a || warn "File $a not mentioned in $M"
-done
+  done
 
-echo "Checking links:"
-LINKS=`xmlstarlet sel -t -m "//dataset" -v "@id" -n $M`
-for a in $LINKS; do
-  echo -n "$a "
-  [ -d $a ] || warn "Dataset $a referenced, but not found"
-done
-echo
+  echo "Checking links: "
+  LINKS=`xmlstarlet sel -t -m "//dataset" -v "@id" -n $M`
+  for a in $LINKS; do
+    echo -n "$a "
+    [ -d $a ] || warn "Dataset $a referenced, but not found"
+  done
+  echo
+fi
 
 if [ $ERROR -eq "0" ]; then 
   echo "${G}XMLcheck: $D is okay${N}"
