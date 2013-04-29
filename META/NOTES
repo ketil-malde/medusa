@@ -38,3 +38,7 @@ Yo: text/x-fasta-rna
 
 zip = xsd:string { pattern='[0-9]{5}(-[0-9]{4})?' }
 
+# Generate a list of files with md5sums
+xmlstarlet sel -t -m "//file" -v "@path" -o "	" -v "@mimetype" -o "	" -v "@md5" ../*/meta.xml
+# List all species
+xmlstarlet sel -t -m "//species" -v "@sciname" -o "	" -v "@tsn" -o "	" -v "." ../*/meta.xml
