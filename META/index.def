@@ -1,4 +1,5 @@
 url: field boolean=Q unique=Q
-species: field indexnopos index=XS
+name: field=caption
+species: field weight=3 indexnopos index=XS
 filetype: field indexnopos index=XF
-sample: unhtml index
+sample: field unhtml index
