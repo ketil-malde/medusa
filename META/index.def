@@ -1,0 +1,4 @@
+url: field boolean=Q unique=Q
+species: field indexnopos index=XS
+filetype: field indexnopos index=XF
+sample: unhtml index
