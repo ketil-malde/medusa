@@ -2,4 +2,5 @@ text/x-fasta-rna
 text/x-fasta-dna
 text/x-fasta-prot
 text/x-fastq
+text/csv
 application/pdf
