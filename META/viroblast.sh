@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DIR=/data/genomdata
-TARGET_DIR=/tmp/viroblast
+TARGET_DIR=/scratch/viroblast2
 
 mkdir -p $TARGET_DIR/db/nucleotide 
 mkdir -p $TARGET_DIR/db/protein 
@@ -12,30 +12,47 @@ echo -n > /tmp/protein
 # link them to target_dir
 # add them (with description) to viroblast.ini
 
+add_nuc(){
+    fpath=`echo "$1" | cut -d '	' -f1`
+    fdesc=`echo "$1" | cut -d '	' -f2 | tr , \;`
+    fname=`basename $fpath`
+    echo "Adding nucleotide file $fpath as [$2] $fdesc"
+    if [ -f $TARGET_DIR/db/nucleotide/$fname ]; then
+	echo -n
+    else
+	(cd $TARGET_DIR/db/nucleotide/ && ln -fs $DIR/$dataset/$fpath . && formatdb -i $fname -p F)
+    fi
+    echo "`basename $fpath` => [$2] $fdesc (DNA)" >> /tmp/nucleotide
+}
+
+add_prot(){
+    fpath=`echo "$1" | cut -d '	' -f1`
+    fdesc=`echo "$1" | cut -d '	' -f2 | tr , \;`
+    fname=`basename $fpath`
+    echo "Adding protein file $fpath as [$2] $fdesc"
+    if [ -f $TARGET_DIR/db/protein/$fname ]; then
+	echo -n
+    else
+	(cd $TARGET_DIR/db/protein/ && ln -fs $DIR/$dataset/$fpath . && formatdb -i $fname -p F)
+    fi
+    echo "`basename $fpath` => [$2] $fdesc (DNA)" >> /tmp/protein
+}
+
 for a in `find $DIR -name meta.xml`; do
   name=`dirname $a`
   dataset=`basename $name`
 
   xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-dna']" -v @path -o "	" -v "." -n $a | grep -v '^$' | while read rec; do
-    fpath=`echo "$rec" | cut -d '	' -f1`
-    fdesc=`echo "$rec" | cut -d '	' -f2 | tr , \;`
-    ln -fs $DIR/$dataset/$fpath $TARGET_DIR/db/nucleotide/
-    echo "`basename $fpath` => [$dataset]: $fdesc (DNA)" >> /tmp/nucleotide
+    add_nuc "$rec" "$dataset"
   done
 
   xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-rna']" -v @path -o "	" -v "." -n $a | grep -v '^$' | while read rec; do
-    fpath=`echo "$rec" | cut -d '	' -f1`
-    fdesc=`echo "$rec" | cut -d '	' -f2 | tr , \;`
-    ln -fs $DIR/$dataset/$fpath $TARGET_DIR/db/nucleotide/
-    echo "`basename $fpath` => [$dataset]: $fdesc (RNA)" >> /tmp/nucleotide
-  done
-  xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-prot']" -v @path -o "	" -v "." -n $a | grep -v '^$' | while read rec; do
-    fpath=`echo "$rec" | cut -d '	' -f1`
-    fdesc=`echo "$rec" | cut -d '	' -f2 | tr , \;`
-    ln -fs $DIR/$dataset/$fpath $TARGET_DIR/db/protein/
-    echo "`basename $fpath` => [$dataset]: $fdesc (Prot)" >> /tmp/protein
+    add_nuc "$rec" "$dataset" 
   done
 
+  xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-prot']" -v @path -o "	" -v "." -n $a | grep -v '^$' | while read rec; do
+    add_prot "$rec" "$dataset" 
+  done
 done
 
 echo > $TARGET_DIR/viroblast.ini "blast+: $TARGET_DIR/blast+/bin/"
