@@ -58,7 +58,7 @@ if [ -f $M ]; then
        # echo "quick mode: skipping checksumming for $f"
     fi
     type=`xmlstarlet sel -t -m "//file[@path='$f']" -v "@mimetype" -n $M`
-    grep -q "^$type\$" $META/mimetypes.txt || warn "$f has unknown mimetype $type"
+    grep -q "^$type\$" $META/mimetypes.txt || warn "$f has unknown mimetype \"$type\""
   done
   echo
 
