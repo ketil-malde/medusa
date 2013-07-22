@@ -30,7 +30,7 @@ echo "XMLcheck: checking $D"
 M=$D/meta.xml
 
 # convert to RNG:
-trang $META/meta.rnc $META/meta.rng
+test $META/meta.rnc -nt $META/meta.rng && (trang $META/meta.rnc $META/meta.rng || error "Can't update $META/meta.rng")
 
 # validate the XML against schema
 xmlstarlet val -e -r $META/meta.rng $M || error "$M failed to validate."
