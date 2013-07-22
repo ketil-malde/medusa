@@ -39,6 +39,8 @@ test $META/meta.rnc -nt $META/meta.rng && (trang $META/meta.rnc $META/meta.rng |
 # validate the XML against schema
 xmlstarlet val -e -r $META/meta.rng $M || error "$M failed to validate."
 
+grep -q '^  *\.\.\.$' $M && warn "meta.xml seems incomplete - please fill in details"
+
 if [ -f $M ]; then
    ID=`xmlstarlet sel -t -m "//meta" -v "@id" $M`
    if [ "$ID" \!= `basename $D` ]; then
