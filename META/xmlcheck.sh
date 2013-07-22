@@ -26,7 +26,11 @@ D=$1
 echo "XMLcheck: checking $D"
 
 # check that directory exists and contains "meta.xml"
-[ -f $D/meta.xml ] || error "Couldn't find $D/meta.xml"
+if [ ! -f $D/meta.xml ]; then
+  error "Couldn't find $D/meta.xml"
+  exit -1
+fi
+
 M=$D/meta.xml
 
 # convert to RNG:
