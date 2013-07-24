@@ -8,4 +8,4 @@ text/x-gff3
 application/vnd.oasis.opendocument.text
 application/vnd.oasis.opendocument.spreadsheet
 application/vnd.oasis.opendocument.database
-
+application/x-sff
