@@ -15,4 +15,4 @@ done
 echo
 echo SUMMARY:
 cat $LOG
-
+echo
