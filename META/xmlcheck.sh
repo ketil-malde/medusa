@@ -64,9 +64,10 @@ if [ -f $M ]; then
   done
   echo
 
-  RFILES=`cd $D && find . | sed -e 's/^\.\///g' | grep -v '^.$' | grep -v meta.xml`
+  RFILES=`cd $D && find . | sed -e 's/^\.\///g' | grep -v '^.$' | tr ' ' '?' | grep -v meta.xml`
   for a in $RFILES; do
-    echo $FILES | grep -q $a || warn "File $a not mentioned in $M"
+    f=`echo $a | tr '?' ' '`
+    echo $FILES | grep -q "$f" || warn "File \"$f\" not mentioned in $M"
   done
 
   echo -n "Checking links: "
