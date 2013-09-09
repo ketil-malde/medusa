@@ -7,6 +7,19 @@ error(){
 	exit -1
 }
 
+mimetype(){
+	SUF=`echo "$1" | sed -e 's/^.*\.\([^.]*\)$/\1/g'`
+	# echo \"$1\" : suffix = $SUF
+	case $SUF in
+	fastq)  echo -n "text/x-fastq" ;;
+	pdf)    echo -n "application/pdf" ;;
+	csv)	echo -n "text/csv" ;;
+	gff3)	echo -n "text/gff3" ;;
+	sff)	echo -n "text/x-sff" ;;
+	*)	echo -n "unknown" ;;	
+	esac
+}
+
 if test -z "$*"; then
 	echo "Usage: $0 dataset"
 	exit -1
@@ -35,7 +48,9 @@ for a in `find . -type f | grep -v meta.xml`; do
   fpath=`echo $x | cut -c36-`
   echo >> meta.xml '  <file path="'$fpath'"'
   echo >> meta.xml '        md5="'$md5'"'
-  echo >> meta.xml '        mimetype="unknown">'
+  echo -n >> meta.xml '        mimetype="'
+  mimetype "$fpath" >> meta.xml
+  echo >> meta.xml '">'
   echo >> meta.xml '        ...'
   echo >> meta.xml '  </file>'
 done
