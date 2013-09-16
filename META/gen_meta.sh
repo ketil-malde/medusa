@@ -11,12 +11,19 @@ mimetype(){
 	SUF=`echo "$1" | sed -e 's/^.*\.\([^.]*\)$/\1/g'`
 	# echo \"$1\" : suffix = $SUF
 	case $SUF in
-	fastq)  echo -n "text/x-fastq" ;;
+	fastq)	echo -n "text/x-fastq" ;;
 	pdf)    echo -n "application/pdf" ;;
-	csv)	echo -n "text/csv" ;;
-	gff3)	echo -n "text/gff3" ;;
-	sff)	echo -n "text/x-sff" ;;
-	*)	echo -n "unknown" ;;	
+        [tc]sv)	echo -n "text/csv" ;;
+	gff3|gff)
+		echo -n "text/x-gff3" ;;
+	sff)	echo -n "application/x-sff" ;;
+	fasta|fa)
+	        echo -n "text/x-fasta" ;;
+	fna)	echo -n "text/x-fasta-dna-or-rna" ;;
+	aa|faa)	echo -n "text/x-fasta-prot" ;;
+	txt)	echo -n "text/plain" ;;
+	html)	echo -n "text/html" ;;
+	*)	echo >&2 "Unknown file type: $1"; echo -n "unknown" ;;	
 	esac
 }
 
