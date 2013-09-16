@@ -3,7 +3,7 @@
 # Generate a skeleton meta.xml file
 
 error(){
-	echo ERROR: $*
+	echo >&2 ERROR: $*
 	exit -1
 }
 
