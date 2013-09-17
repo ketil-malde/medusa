@@ -5,6 +5,11 @@ developed based on the need for a structured way to manage molecular
 data, data with a variety of file formats and analyses, and where a
 rapidly advancing technology ensures that new formats keep coming.
 
+This is a [darcs](http://darcs.net/) repository, if you have `darcs`
+installed, you can get a copy by doing
+
+    darcs get http://malde.org/~ketil/datastore
+
 ## Basic structure
 
 Each data set is a separate subdirectory, containing arbitrary files
