@@ -16,19 +16,19 @@ contains the metadata describing the data set.
 This directory contains the bulk of the implementation, mostly in the
 form of shell scripts.
 
- * meta.rnc - RelaxNG schema for metadata XML files
- * mimetypes.txt - a list of known file types. Note that this is not
+ * [meta.rnc](META/meta.rnc) - RelaxNG schema for metadata XML files
+ * [mimetypes.txt](META/mimetypes.txt) - a list of known file types. Note that this is not
    exhaustive, and unknown file type is not an error.
- * xmlcheck.sh - checks the data sets given as command-line parameters
+ * [xmlcheck.sh](META/xmlcheck.sh) - checks the data sets given as command-line parameters
    for consistency and correctness
- * checkall.sh - checks all data sets using xmlcheck.sh, and outputs a
+ * [checkall.sh](META/checkall.sh) - checks all data sets using xmlcheck.sh, and outputs a
    summary
- * gen_meta.sh - builds a skeleton metadata file for the given
+ * [gen_meta.sh](META/gen_meta.sh) - builds a skeleton metadata file for the given
    dataset, trying to automatically determine file types
- * scriptindex.sh - builds a generic search index using xapian and
+ * [scriptindex.sh](META/scriptindex.sh) - builds a generic search index using xapian and
    omega
- * index.def - definitions for scriptindex
- * viroblast.sh - builds a Viroblast sequence search service
+ * [index.def](META/index.def) - definitions for scriptindex
+ * [viroblast.sh](META/viroblast.sh) - builds a Viroblast sequence search service
 
 ## Required software
 
@@ -80,7 +80,7 @@ something like:
 
     <species tsn="89113" sciname="Lepeophtheirus salmonis">Atlantic salmon louse</species>
 
-## Dataset
+### Dataset
 
 Often it is useful to refer to other datasets.  Again, the contents is
 plain text, but a required attribute must point to the dataset ID
@@ -91,7 +91,12 @@ kind of relationship. For example:
 
 The possible values for `rel` is `supersedes`, `subsumes`, and `uses`.
 
-## Person and location
+### Person and location
 
 Currently plain text fields, this is likely to change as more
 structure is added in the future.
+
+## Test dataset
+
+A simple [test dataset](Test/) (aptly, if not imaginatively, named `Test`) is
+also included.
