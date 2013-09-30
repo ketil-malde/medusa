@@ -33,7 +33,7 @@ add_prot(){
     if [ -f $TARGET_DIR/db/protein/$fname ]; then
 	echo -n
     else
-	(cd $TARGET_DIR/db/protein/ && ln -fs $DIR/$dataset/$fpath . && formatdb -i $fname -p F)
+	(cd $TARGET_DIR/db/protein/ && ln -fs $DIR/$dataset/$fpath . && formatdb -i $fname -p T)
     fi
     echo "`basename $fpath` => [$2] $fdesc (DNA)" >> /tmp/protein
 }
