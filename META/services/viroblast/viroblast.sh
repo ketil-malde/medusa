@@ -42,7 +42,7 @@ filter(){
   grep -v '^[ 	]*$' |  sed 'N;s/	\n[ 	]*/	/g'
 }
 
-for a in `find $DIR -name meta.xml`; do
+for a in $DIR/*/meta.xml; do
   name=`dirname $a`
   dataset=`basename $name`
 
