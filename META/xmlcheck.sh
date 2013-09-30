@@ -2,6 +2,7 @@
 
 META=META
 ERROR=0
+WARN=0
 
 # Colors
 R="$(tput setaf 1)"
@@ -18,6 +19,7 @@ error(){
 warn(){
     echo
     echo ${Y}WARNING:${N} $*
+    WARN=1
 }
 
 # Check a data set (directory) if it conforms to conventions
@@ -79,9 +81,13 @@ if [ -f $M ]; then
   echo
 fi
 
-if [ $ERROR -eq "0" ]; then 
-  echo "${G}XMLcheck: $D is okay${N}"
-else
-  echo "${R}Errors occured${N}"
+if [ ! $ERROR -eq "0" ]; then 
+  echo "${R}XMLcheck: $D had errors${N}"
   exit -1
+elif [ ! $WARN -eq "0" ]; then
+  echo "${Y}XMLcheck: $D had warnings${N}"
+  exit 1
+else
+  echo "${G}XMLcheck: $D is okay${N}"
+  exit 0
 fi
