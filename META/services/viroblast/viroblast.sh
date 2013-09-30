@@ -38,19 +38,23 @@ add_prot(){
     echo "`basename $fpath` => [$2] $fdesc (DNA)" >> /tmp/protein
 }
 
+filter(){
+  grep -v '^[ 	]*$' |  sed 'N;s/	\n[ 	]*/	/g'
+}
+
 for a in `find $DIR -name meta.xml`; do
   name=`dirname $a`
   dataset=`basename $name`
 
-  xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-dna']" -v @path -o "	" -v "." -n $a | grep -v '^$' | while read rec; do
+  xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-dna']" -v @path -o "	" -v "." -n $a | filter | while read rec; do
     add_nuc "$rec" "$dataset"
   done
 
-  xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-rna']" -v @path -o "	" -v "." -n $a | grep -v '^$' | while read rec; do
+  xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-rna']" -v @path -o "	" -v "." -n $a | filter | while read rec; do
     add_nuc "$rec" "$dataset" 
   done
 
-  xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-prot']" -v @path -o "	" -v "." -n $a | grep -v '^$' | while read rec; do
+  xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-prot']" -v @path -o "	" -v "." -n $a | filter | while read rec; do
     add_prot "$rec" "$dataset" 
   done
 done
