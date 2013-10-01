@@ -1,7 +1,7 @@
 <meta id="Test" version="1">
   <!-- general description of data set -->
   <description>
-    Something data from the <species tsn="89113" sciname="Lepeophtheirus salmonis">salmon louse</species>.
+    Something data to check the format.  Avoiding any useful information to avoid polluting services.
   </description>
   <!-- data set provenance and relationships -->
   <provenance>
@@ -10,7 +10,7 @@
   </provenance>
   <!-- file list -->
   <contents>
-    <file path="test.fasta" md5="d41d8cd98f00b204e9800998ecf8427e" mimetype="text/x-fasta-rna" />
+    <file path="test.fasta" md5="d41d8cd98f00b204e9800998ecf8427e" mimetype="text/plain" />
     <!-- file path="test2.fna" md5="abcdef0123467879abcdef0123467879" mimetype="text/x-fasta-dna">
       This file contains some DNA sequences from the froobnash glob.
     </file -->
