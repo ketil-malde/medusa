@@ -1,6 +1,7 @@
 #!/bin/bash
 
 DIR=/data/genomdata
+TARGET_DIR=/var/lib/omega/data/default
 
 for a in `find $DIR -name meta.xml`; do 
   name=`dirname $a`
@@ -10,7 +11,7 @@ for a in `find $DIR -name meta.xml`; do
   xmlstarlet sel -t -m "//file" -o "filetype=" -v "@path" -o "   " -v "@mimetype" -n $a  | grep -v "^$"
   echo "sample= "`xmlstarlet sel -t -m "//description" -v "." $a`
   echo
-done | scriptindex -v --overwrite $DIR/META/metadb/default $DIR/META/index.def
+done | scriptindex -v --overwrite $TARGET_DIR $DIR/META/services/xapian-index/index.def
 
 # rm -rf /var/lib/xapian-omega/data/default                     
 # cp -a $DIR/META/metadb /var/lib/xapian-omega/data/default       
