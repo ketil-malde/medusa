@@ -1,5 +1,6 @@
 #!/bin/bash
 
+DATA_DIR=/data/genomdata
 META=META
 ERROR=0
 WARN=0
@@ -35,7 +36,7 @@ fi
 
 M=$D/meta.xml
 
-# convert to RNG:
+# convert to RNG if RNC is newer:
 test $META/meta.rnc -nt $META/meta.rng && (trang $META/meta.rnc $META/meta.rng || error "Can't update $META/meta.rng")
 
 # validate the XML against schema
@@ -44,11 +45,31 @@ xmlstarlet val -e -r $META/meta.rng $M || error "$M failed to validate."
 grep -q '^  *\.\.\.$' $M && warn "meta.xml seems incomplete - please fill in details"
 
 if [ -f $M ]; then
+   # Check that ID matches the directory name
    ID=`xmlstarlet sel -t -m "//meta" -v "@id" $M`
    if [ "$ID" \!= `basename $D` ]; then
 	error "ID of $ID doesn't match "`basename $D`
    fi
 
+   # Check that metadata is unchanged if version is unchanged
+   META_MD5=`md5sum $M | cut -f1 -d' '`
+   VER=`xmlstarlet sel -t -m "//meta" -v "@version" $M`
+   OLD=`grep "$ID	$VER	" "$DATA_DIR/META/meta_checksums"`
+   if grep -q "$ID	" "$DATA_DIR/META/meta_checksums"; then
+      if [ -z "$OLD" ]; then
+	echo "Registering new version: $ID $VER"
+	echo "$ID	$VER	$META_MD5" >> $DATA_DIR/META/meta_checksums
+      else
+	S_OLD=`echo "$OLD" | cut -f3`
+	if [ "$META_MD5" \!= "$S_OLD" ]; then
+	   error "$ID version $VER exists, but has different checksum! $META_MD5 vs $S_OLD"
+        fi
+      fi
+   else # new dataset
+        echo "Registering new dataset: $ID $VER"
+        echo "$ID	$VER	$META_MD5" >> $DATA_DIR/META/meta_checksums
+   fi
+   
   # Check files exist, checksums, file types
   echo -n "Checking files: "
   FILES=`xmlstarlet sel -t -m "//file" -v "@path" -n $M`
