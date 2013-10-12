@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DATA_DIR=/data/genomdata
-META=META
+META=$DATA_DIR/META
 ERROR=0
 WARN=0
 
@@ -51,6 +51,7 @@ if [ -f $M ]; then
 	error "ID of $ID doesn't match "`basename $D`
    fi
 
+  if [ "$(dirname $(readlink -e $D))" = "$DATA_DIR" ]; then # only register if we are in the data dir
    # Check that metadata is unchanged if version is unchanged
    META_MD5=`md5sum $M | cut -f1 -d' '`
    VER=`xmlstarlet sel -t -m "//meta" -v "@version" $M`
@@ -69,7 +70,8 @@ if [ -f $M ]; then
         echo "Registering new dataset: $ID $VER"
         echo "$ID	$VER	$META_MD5" >> $DATA_DIR/META/meta_checksums
    fi
-   
+  fi
+ 
   # Check files exist, checksums, file types
   echo -n "Checking files: "
   FILES=`xmlstarlet sel -t -m "//file" -v "@path" -n $M`
