@@ -1,4 +1,5 @@
 #!/bin/bash
+set -u -o pipefail
 
 # get a data set
 
@@ -10,12 +11,14 @@ TARGET="$MDZ_DATADIR/$1"
 
 error(){
     echo "Error: $*"
+    # clean up
+    [ -z "$CLEANUP" ] && rm -rf "$TARGET"
     exit -1
 }
 
 # create the target data dir
 mkdatadir(){
-    mkdir "$TARGET" || error "Could not create directory $TARGET"
+    mkdir "$TARGET" || CLEANUP=no error "Could not create directory $TARGET"
 }
 
 # extract list of files from meta.xml
@@ -23,10 +26,18 @@ getfiles(){
     xmlstarlet sel -t -m "//file" -v "@path" -n "$1"
 }
 
+CLEANUP=no
+[ -z "$1" ]               && error "Usage: $0 <dataset>"
+[ -e "$TARGET" ]          && "$TARGET already exists"
+[ -z "$MDZ_REPO_METHOD" ] && error "MDZ_REPO_METHOD undefined"
+[ -z "$MDZ_REPOSITORY" ]  && error "MDZ_REPOSITORY undefined"
+[ -z "$MDZ_DATADIR" ]     && error "MDZ_DATADIR undefined"
+CLEANUP=
+
 case "$MDZ_REPO_METHOD" in
     scp)
         mkdatadir
-	scp "$MDZ_REPOSITORY/$1/meta.xml" "$TARGET/"
+	scp "$MDZ_REPOSITORY/$1/meta.xml" "$TARGET/"   || error "Failed to download $MDZ_REPOSITORY/$1/meta.xml"
 	for path in `getfiles $TARGET/meta.xml`; do
 	    scp "$MDZ_REPOSITORY/$1/$path" "$TARGET/$path"
         done
