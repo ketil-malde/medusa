@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Get a data set from repository
-# Uses: MDZ_REPO_METHOD MDZ_REPOSITORY MDZ_DATADIR
+# Put a data set (by path) from repository
+# Uses: MDZ_REPO_METHOD MDZ_REPOSITORY
 
 SOURCE="$MDZ_DATADIR/$1"
 
