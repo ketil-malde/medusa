@@ -20,11 +20,15 @@ read_config(){
   fi
 }
 
+usage(){
+  echo "Usage: mdz [cmd] [options]"
+}
+
 export MDZ_DIR MDZ_DATADIR MDZ_REPOSITORY MDZ_REPO_METHOD
 
 read_config
 CMD=$1
-PARAMS=${*:2}
+PARAMS="${@:2}"
 
 case $CMD in
   check)
@@ -42,8 +46,11 @@ case $CMD in
   list)
 	$MDZ_DIR/list.sh $PARAMS
   ;;
+  genmeta)
+	$MDZ_DIR/gen_meta.sh $PARAMS
+  ;;
   *)
- 	echo "Usage: mdz [cmd] [options]"
+ 	usage
   ;;
 esac
 
