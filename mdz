@@ -31,7 +31,7 @@ case $CMD in
 	$MDZ_DIR/xmlcheck.sh $PARAMS
   ;;
   checkall)
-	$MDZ_DIR/checkall.sh
+	$MDZ_DIR/checkall.sh $PARAMS
   ;;
   get)
 	$MDZ_DIR/get.sh $PARAMS

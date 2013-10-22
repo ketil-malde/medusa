@@ -1,8 +1,9 @@
 #!/bin/bash
 
-[ -z "$MDZ_DATADIR" ]     && error "MDZ_DATADIR undefined"
-
-set -uf -o pipefail
+error(){
+    echo "Error: $*"
+    exit -1
+}
 
 R="$(tput setaf 1)"
 G="$(tput setaf 2)"
@@ -12,7 +13,18 @@ N="$(tput sgr0)"
 LOG=/tmp/xmlcheck.log
 date > $LOG
 
-for a in $(ls $MDZ_DATADIR); do
+if [ -z "$1" ]; then
+   DIR=""
+elif [ -d "$1" ]; then
+   DIR="$1/"
+else
+   error "checkall: $1 is not a directory"
+fi
+
+set -u -o pipefail
+shopt -s failglob
+ 
+for a in $DIR*; do
   if echo $a | egrep -q -v _darcs\|lost\\+found; then
      $MDZ_DIR/xmlcheck.sh $a
      RET=$?
