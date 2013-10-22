@@ -3,13 +3,17 @@
 # Put a data set (by path) from repository
 # Uses: MDZ_REPO_METHOD MDZ_REPOSITORY
 
-SOURCE="$MDZ_DATADIR/$1"
+error(){
+    echo "Error: $*"
+    exit -1
+}
+
+SOURCE="$1"
 
 [ -z "$1" ]               && error "Usage: $0 <dataset>"
-[ ! -e "$SOURCE" ]        && "$SOURCE doesn't exist"
+[ ! -e "$SOURCE" ]        && error "$SOURCE doesn't exist"
 [ -z "$MDZ_REPO_METHOD" ] && error "MDZ_REPO_METHOD undefined"
 [ -z "$MDZ_REPOSITORY" ]  && error "MDZ_REPOSITORY undefined"
-[ -z "$MDZ_DATADIR" ]     && error "MDZ_DATADIR undefined"
 
 set -euf -o pipefail
 

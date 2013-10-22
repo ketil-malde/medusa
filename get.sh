@@ -2,13 +2,9 @@
 set -u -o pipefail
 
 # Get a data set from repository
+# Uses: MDZ_REPO_METHOD MDZ_REPOSITORY
 
-# Uses:
-# MDZ_REPO_METHOD
-# MDZ_REPOSITORY
-# MDZ_DATADIR
-
-TARGET="$MDZ_DATADIR/$1"
+TARGET="$1"
 
 error(){
     echo "Error: $*"
@@ -32,7 +28,6 @@ CLEANUP=no
 [ -e "$TARGET" ]          && "$TARGET already exists"
 [ -z "$MDZ_REPO_METHOD" ] && error "MDZ_REPO_METHOD undefined"
 [ -z "$MDZ_REPOSITORY" ]  && error "MDZ_REPOSITORY undefined"
-[ -z "$MDZ_DATADIR" ]     && error "MDZ_DATADIR undefined"
 CLEANUP=
 
 case "$MDZ_REPO_METHOD" in
