@@ -1,14 +1,15 @@
-# A data storage for generic and heterogenous scientific data
+# A metadata-enriched distributed universal service archive
 
-This is a rough implementation of a generic data store.  It was
-developed based on the need for a structured way to manage molecular
-data, data with a variety of file formats and analyses, and where a
-rapidly advancing technology ensures that new formats keep coming.
+This is a rough implementation of a generic data store and associated
+services.  It was developed based on the need for a structured way to
+manage molecular data, data with a variety of file formats and
+analyses, and where a rapidly advancing technology ensures that new
+formats keep coming.
 
 This is a [darcs](http://darcs.net/) repository, if you have `darcs`
 installed, you can get a copy by doing
 
-    darcs get http://malde.org/~ketil/datastore
+    darcs get http://malde.org/~ketil/medusa
 
 ## Basic structure
 
@@ -16,24 +17,28 @@ Each data set is a separate subdirectory, containing arbitrary files
 and subdirectories.  A file named `meta.xml` is mandatory, and
 contains the metadata describing the data set.
 
-## The META directory
+## The 'medusa' directory
 
 This directory contains the bulk of the implementation, mostly in the
 form of shell scripts.
 
- * [meta.rnc](META/meta.rnc) - RelaxNG schema for metadata XML files
- * [mimetypes.txt](META/mimetypes.txt) - a list of known file types. Note that this is not
+ * [mdz](medusa/mdz) - The main driver script that sets up the
+   environment and calls other commands
+ * [medusa.conf.example](medusa.conf.example) - Example config file,
+   copy to $HOME/.medusa.conf and edit as appropriate
+ * [meta.rnc](medusa/meta.rnc) - RelaxNG schema for metadata XML files
+ * [mimetypes.txt](medusa/mimetypes.txt) - a list of known file types. Note that this is not
    exhaustive, and unknown file type is not an error.
- * [xmlcheck.sh](META/xmlcheck.sh) - checks the data sets given as command-line parameters
+ * [xmlcheck.sh](medusa/xmlcheck.sh) - checks the data sets given as command-line parameters
    for consistency and correctness
- * [checkall.sh](META/checkall.sh) - checks all data sets using xmlcheck.sh, and outputs a
+ * [checkall.sh](medusa/checkall.sh) - checks all data sets using xmlcheck.sh, and outputs a
    summary
- * [gen_meta.sh](META/gen_meta.sh) - builds a skeleton metadata file for the given
+ * [gen_meta.sh](medusa/gen_meta.sh) - builds a skeleton metadata file for the given
    dataset, trying to automatically determine file types
- * [scriptindex.sh](META/scriptindex.sh) - builds a generic search index using xapian and
+ * [scriptindex.sh](medusa/scriptindex.sh) - builds a generic search index using xapian and
    omega
- * [index.def](META/index.def) - definitions for scriptindex
- * [viroblast.sh](META/viroblast.sh) - builds a Viroblast sequence search service
+ * [index.def](medusa/index.def) - definitions for scriptindex
+ * [viroblast.sh](medusa/viroblast.sh) - builds a Viroblast sequence search service
 
 ## Required software
 
@@ -58,10 +63,10 @@ files that constitute the dataset.  Then run `gen_meta.sh`.
 
     mkdir DataSet
     mv [....] DataSet/
-	META/gen_meta.sh DataSet
+	medusa/gen_meta.sh DataSet
 	
 You should now have a `meta.xml` file in DataSet.  If you run
-`META/xmlcheck.sh`, you will likely get some warnings.  Now, edit the
+`medusa/xmlcheck.sh`, you will likely get some warnings.  Now, edit the
 metadata file, and fill in details.  Then check it (again) with
 `xmlcheck`, and when it passes, you are done as far as the system is
 concerned.
