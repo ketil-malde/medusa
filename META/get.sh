@@ -1,8 +1,9 @@
 #!/bin/bash
 set -u -o pipefail
 
-# get a data set
+# Get a data set from repository
 
+# Uses:
 # MDZ_REPO_METHOD
 # MDZ_REPOSITORY
 # MDZ_DATADIR

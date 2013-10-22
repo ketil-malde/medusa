@@ -1,0 +1,18 @@
+
+# Medusa config file
+# Typically stored as /etc/medusa.conf or per user in $HOME/.medusa.conf
+# These variables can also be set directly in the shell
+
+# Where the medusa installation resides
+# should probably be something/lib/something
+MDZ_DIR=$HOME/work/datastore/META
+
+# A repository is a remote data store
+# Method to access the repository:
+MDZ_REPO_METHOD=scp
+
+# URL or other location of the repository:
+MDZ_REPOSITORY=zeus:/data/genomdata
+
+# Locally accessible directory holding data sets
+MDZ_DATADIR=/tmp

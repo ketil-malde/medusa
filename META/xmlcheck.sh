@@ -1,7 +1,10 @@
 #!/bin/bash
 
-DATA_DIR=/data/genomdata
-META=$DATA_DIR/META
+[ -z "$MDZ_DIR" ]         && error "MDZ_DIR undefined"
+[ -z "$MDZ_DATADIR" ]     && error "MDZ_DATADIR undefined"
+
+set -euf -o pipefail
+
 ERROR=0
 WARN=0
 
@@ -28,19 +31,19 @@ D=$1
 
 echo "XMLcheck: checking $D"
 
+M=$D/meta.xml
+
 # check that directory exists and contains "meta.xml"
-if [ ! -f $D/meta.xml ]; then
-  error "Couldn't find $D/meta.xml"
+if [ ! -f $M ]; then
+  error "Couldn't find 'meta.xml' in $D"
   exit -1
 fi
 
-M=$D/meta.xml
-
 # convert to RNG if RNC is newer:
-test $META/meta.rnc -nt $META/meta.rng && (trang $META/meta.rnc $META/meta.rng || error "Can't update $META/meta.rng")
+test $MDZ_DIR/meta.rnc -nt $MDZ_DIR/meta.rng && (trang $MDZ_DIR/meta.rnc $MDZ_DIR/meta.rng || error "Can't update $MDZ_DIR/meta.rng")
 
 # validate the XML against schema
-xmlstarlet val -e -r $META/meta.rng $M || error "$M failed to validate."
+xmlstarlet val -e -r $MDZ_DIR/meta.rng $M || error "$M failed to validate."
 
 grep -q '^  *\.\.\.$' $M && warn "meta.xml seems incomplete - please fill in details"
 
@@ -51,15 +54,15 @@ if [ -f $M ]; then
 	error "ID of $ID doesn't match "`basename $D`
    fi
 
-  if [ "$(dirname $(readlink -e $D))" = "$DATA_DIR" ]; then # only register if we are in the data dir
+  if [ "$(dirname $(readlink -e $D))" = "$MDZ_DATADIR" ]; then # only register if we are in the data dir
    # Check that metadata is unchanged if version is unchanged
    META_MD5=`md5sum $M | cut -f1 -d' '`
    VER=`xmlstarlet sel -t -m "//meta" -v "@version" $M`
-   OLD=`grep "$ID	$VER	" "$DATA_DIR/META/meta_checksums"`
-   if grep -q "$ID	" "$DATA_DIR/META/meta_checksums"; then
+   OLD=`grep "$ID	$VER	" "$MDZ_DIR/meta_checksums"` || echo -n
+   if grep -q "$ID	" "$MDZ_DIR/meta_checksums"; then
       if [ -z "$OLD" ]; then
 	echo "Registering new version: $ID $VER"
-	echo "$ID	$VER	$META_MD5" >> $DATA_DIR/META/meta_checksums
+	echo "$ID	$VER	$META_MD5" >> $MDZ_DIR/meta_checksums
       else
 	S_OLD=`echo "$OLD" | cut -f3`
 	if [ "$META_MD5" \!= "$S_OLD" ]; then
@@ -68,7 +71,7 @@ if [ -f $M ]; then
       fi
    else # new dataset
         echo "Registering new dataset: $ID $VER"
-        echo "$ID	$VER	$META_MD5" >> $DATA_DIR/META/meta_checksums
+        echo "$ID	$VER	$META_MD5" >> $MDZ_DIR/meta_checksums
    fi
   fi
  
@@ -85,7 +88,7 @@ if [ -f $M ]; then
        # echo "quick mode: skipping checksumming for $f"
     fi
     type=`xmlstarlet sel -t -m "//file[@path='$f']" -v "@mimetype" -n $M`
-    grep -q "^$type\$" $META/mimetypes.txt || warn "$f has unknown mimetype \"$type\""
+    grep -q "^$type\$" $MDZ_DIR/mimetypes.txt || warn "$f has unknown mimetype \"$type\""
   done
   echo
 
@@ -96,7 +99,7 @@ if [ -f $M ]; then
   done
 
   echo -n "Checking links: "
-  LINKS=`xmlstarlet sel -t -m "//dataset" -v "@id" -n $M`
+  LINKS=`xmlstarlet sel -t -m "//dataset" -v "@id" -n $M` || echo -n # failure is okay
   for a in $LINKS; do
     echo -n .
     [ -d $a ] || warn "Dataset $a referenced, but not found"

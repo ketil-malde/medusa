@@ -1,0 +1,49 @@
+#!/bin/bash
+set -ef -o pipefail
+
+# mdz is the front end, which in turns call other files
+
+error(){
+	echo Error: $*
+	exit -1
+}
+
+read_config(){
+  if [ -f "$MDZ_CONFIG" ]; then
+	source "$MDZ_CONFIG"
+  elif [ -f ~/.medusa.conf ]; then
+	source ~/.medusa.conf
+  elif [ -f /etc/medusa.conf ]; then
+	source /etc/medusa.conf
+  else
+	error "no config file found - exit"
+  fi
+}
+
+export MDZ_DIR MDZ_DATADIR MDZ_REPOSITORY MDZ_REPO_METHOD
+
+read_config
+CMD=$1
+PARAMS=${*:2}
+
+case $CMD in
+  check)
+	$MDZ_DIR/xmlcheck.sh $PARAMS
+  ;;
+  checkall)
+	$MDZ_DIR/checkall.sh
+  ;;
+  get)
+	$MDZ_DIR/get.sh $PARAMS
+  ;;
+  put)
+	$MDZ_DIR/get.sh $PARAMS
+  ;;
+  list)
+	$MDZ_DIR/list.sh $PARAMS
+  ;;
+  *)
+ 	echo "Usage: mdz [cmd] [options]"
+  ;;
+esac
+
