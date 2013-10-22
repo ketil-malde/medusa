@@ -37,7 +37,7 @@ case $CMD in
 	$MDZ_DIR/get.sh $PARAMS
   ;;
   put)
-	bash -x $MDZ_DIR/put.sh $PARAMS
+	$MDZ_DIR/put.sh $PARAMS
   ;;
   list)
 	$MDZ_DIR/list.sh $PARAMS
