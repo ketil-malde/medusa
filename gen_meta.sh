@@ -49,10 +49,10 @@ cat >> meta.xml << EOF
 <contents>
 EOF
 
-for a in `find . -type f | grep -v meta.xml`; do
-  x=`md5sum $a`
-  md5=`echo $x | cut -c-32`
-  fpath=`echo $x | cut -c36-`
+find . -type f | grep -v meta.xml | while read a; do
+  x=`md5sum "$a"`
+  md5=`echo "$x" | cut -c-32`
+  fpath=`echo "$x" | cut -c36-`
   echo >> meta.xml '  <file path="'$fpath'"'
   echo >> meta.xml '        md5="'$md5'"'
   echo -n >> meta.xml '        mimetype="'
