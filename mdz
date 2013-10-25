@@ -24,6 +24,11 @@ usage(){
   echo "Usage: mdz [cmd] [options]"
 }
 
+serve(){
+    [ -x "$MDZ_DIR/services/$1" ] || error "No such service: $1"
+    echo "services not implemented"
+}
+
 export MDZ_DIR MDZ_DATADIR MDZ_REPOSITORY MDZ_REPO_METHOD
 
 read_config
@@ -48,6 +53,26 @@ case $CMD in
   ;;
   genmeta)
 	$MDZ_DIR/gen_meta.sh $PARAMS
+  ;;
+  service)
+	serve $PARAMS
+  ;;
+  --help)
+	usage
+	cat <<EOF
+Available commands:
+
+  check    - check a dataset for correctness
+  checkall - check all datasets
+  get      - get a dataset from remote repository
+  put      - put a dataset in remote repository
+  list     - list contenst of remote repository
+  genmeta  - generate metadata for a dataset
+
+  service <serv> - service specific commmands
+
+EOF
+  echo "Available services: " $(ls $MDZ_DIR/services)
   ;;
   *)
  	usage
