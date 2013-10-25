@@ -38,7 +38,8 @@ test -d $DIR || error "Data set $DIR not found"
 test ! -e $DIR/meta.xml || error "$DIR/meta.xml already exists"
 
 cd $DIR
-echo '<meta id="'$DIR'" version="1">' > meta.xml
+NAME=`basename "$DIR"`
+echo '<meta id="'$NAME'" version="1">' > meta.xml
 cat >> meta.xml << EOF
 <description>
   ...
@@ -52,7 +53,7 @@ EOF
 find . -type f | grep -v meta.xml | while read a; do
   x=`md5sum "$a"`
   md5=`echo "$x" | cut -c-32`
-  fpath=`echo "$x" | cut -c36-`
+  fpath=`echo "$a" | cut -d/ -f2-`
   echo >> meta.xml '  <file path="'$fpath'"'
   echo >> meta.xml '        md5="'$md5'"'
   echo -n >> meta.xml '        mimetype="'
