@@ -77,8 +77,7 @@ if [ -f "$M" ]; then
  
   # Check files exist, checksums, file types
   echo -n "Checking files: "
-  FILES=$(xmlstarlet sel -t -m "//file" -v "@path" -n "$M")
-  for f in $FILES; do
+  xmlstarlet sel -t -m //file -v @path -n "$M" | while read f; do
     [ -f "$D/$f" ] || error "File $f not found."
     md5=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "@md5" -n "$M")
     if [ -z ${QUICK+x} ]; then
@@ -95,7 +94,7 @@ if [ -f "$M" ]; then
   RFILES=$(cd "$D" && find . -type f| sed -e 's/^\.\///g' | grep -v '^.$' | tr ' ' '?' | grep -v meta.xml)
   for a in $RFILES; do
     f=$(echo "$a" | tr '?' ' ')
-    echo "$FILES" | grep -q "$f" || warn "File \"$f\" not mentioned in $M"
+    xmlstarlet sel -t -m //file -v @path -n "$M" | grep -q "$f" || warn "File \"$f\" not mentioned in $M"
   done
 
   echo -n "Checking links: "
