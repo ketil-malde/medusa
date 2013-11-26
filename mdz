@@ -25,8 +25,8 @@ usage(){
 }
 
 serve(){
-    [ -x "$MDZ_DIR/services/$1" ] || error "No such service: $1"
-    echo "services not implemented"
+    [ -x "$MDZ_DIR/services/$1/$1.sh" ] || error "No such service: $1"
+    "$MDZ_DIR/services/$1/$1.sh" "${@:2}"
 }
 
 export MDZ_DIR MDZ_DATADIR MDZ_REPOSITORY MDZ_REPO_METHOD
