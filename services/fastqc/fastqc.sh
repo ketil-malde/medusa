@@ -18,11 +18,12 @@ cd -
 
 # extract all fastq-files from input
 cd "$INPUT" || error "Couldn't navigate to input dataset \"$INPUT\""
-FILES=$(xmlstarlet sel -t -m "//file[@mimetype=\"text/x-fastq\"]" -v "@path" -n meta.xml)
-# run fastq
-fastqc -t "$THREADS" -o "$TARGET" "$FILES"
-# generate metadata
+xmlstarlet sel -t -m "//file[@mimetype='text/x-fastq']" -v "@path" -n meta.xml | while read FILE; do
+  # run fastq
+  fastqc -t "$THREADS" -o "$TARGET" "$FILE"
+done
 
+# generate metadata
 # link to dataset-id
 # link to file names
 # build summary page?
