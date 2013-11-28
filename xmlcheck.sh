@@ -77,7 +77,7 @@ if [ -f "$M" ]; then
  
   # Check files exist, checksums, file types
   echo -n "Checking files: "
-  xmlstarlet sel -t -m //file -v @path -n "$M" | while read f; do
+  while read f; do
     [ -f "$D/$f" ] || error "File $f not found."
     md5=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "@md5" -n "$M")
     if [ -z ${QUICK+x} ]; then
@@ -88,8 +88,7 @@ if [ -f "$M" ]; then
     fi
     type=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "@mimetype" -n "$M")
     grep -q "^$type\$" $MDZ_DIR/mimetypes.txt || warn "$f has unknown mimetype \"$type\""
-  done
-  echo
+  done < <(xmlstarlet sel -t -m //file -v @path -n "$M" | grep .)
 
   RFILES=$(cd "$D" && find . -type f| sed -e 's/^\.\///g' | grep -v '^.$' | tr ' ' '?' | grep -v meta.xml)
   for a in $RFILES; do
