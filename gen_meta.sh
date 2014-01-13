@@ -61,6 +61,7 @@ find . -type f | grep -v meta.xml | while read a; do
   echo >> meta.xml '">'
   echo >> meta.xml '        ...'
   echo >> meta.xml '  </file>'
+  chmod ugo-w "$a"
 done
 
 cat >> meta.xml << EOF
@@ -68,3 +69,4 @@ cat >> meta.xml << EOF
 </meta>
 EOF
 
+chmod -w .

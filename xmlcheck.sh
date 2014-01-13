@@ -17,12 +17,14 @@ N="$(tput sgr0)"
 error(){
     echo
     echo "${R}ERROR:${N} $@"
+    echo
     ERROR=1
 }
 
 warn(){
     echo
     echo "${Y}WARNING:${N} $@"
+    echo
     WARN=1
 }
 
@@ -46,6 +48,14 @@ test $MDZ_DIR/meta.rnc -nt $MDZ_DIR/meta.rng && (trang $MDZ_DIR/meta.rnc $MDZ_DI
 xmlstarlet val -e -r "$MDZ_DIR/meta.rng" "$M" || error "$M failed to validate."
 
 grep -q '^  *\.\.\.$' "$M" && warn "meta.xml seems incomplete - please fill in details"
+
+# Check permissions: everything should be write protected
+echo "Checking permissions: "
+if find "$D" -perm /ugo=w | grep . ; then 
+   warn "Writable files found"
+else
+   echo "Permissions OK"
+fi
 
 if [ -f "$M" ]; then
    # Check that ID matches the directory name
