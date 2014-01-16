@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euf -o pipefail
 
 # Generate a skeleton meta.xml file
 . "$MDZ_DIR/functions.sh"
