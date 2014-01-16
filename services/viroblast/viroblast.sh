@@ -3,13 +3,20 @@ set -u -o pipefail
 shopt -s failglob
 . "$MDZ_DIR/functions.sh"
 
-DIR=/data/genomdata
-TARGET_DIR=/scratch/viroblast2
+DIR=$MDZ_DATADIR
+TARGET_DIR=$MDZ_VIROBLAST_DIR
+
+[ -d "$TARGET_DIR" ] || error "Viroblast target dir '$TARGET_DIR' does not exist"
 
 mkdir -p $TARGET_DIR/db/nucleotide 
 mkdir -p $TARGET_DIR/db/protein 
 echo -n > /tmp/nucleotide
 echo -n > /tmp/protein
+
+# Use BLAST+ included with Viroblst
+formatdb(){
+   "$MDZ_VIROBLAST_DIR/blast+/bin/makeblastdb" -in "$1" -dbtype "$2"
+}
 
 # Find all files of type text/x-fasta-*
 # link them to target_dir
@@ -23,7 +30,7 @@ add_nuc(){
     if [ -f $TARGET_DIR/db/nucleotide/$fname ]; then
 	echo -n
     else
-	(cd $TARGET_DIR/db/nucleotide/ && ln -fs $DIR/$dataset/$fpath . && formatdb -i $fname -p F)
+	(cd $TARGET_DIR/db/nucleotide/ && ln -fs $DIR/$dataset/$fpath . && formatdb $fname nucl)
     fi
     echo "`basename $fpath` => [$2] $fdesc (DNA)" >> /tmp/nucleotide
 }
@@ -36,7 +43,7 @@ add_prot(){
     if [ -f $TARGET_DIR/db/protein/$fname ]; then
 	echo -n
     else
-	(cd $TARGET_DIR/db/protein/ && ln -fs $DIR/$dataset/$fpath . && formatdb -i $fname -p T)
+	(cd $TARGET_DIR/db/protein/ && ln -fs $DIR/$dataset/$fpath . && formatdb $fname prot)
     fi
     echo "`basename $fpath` => [$2] $fdesc (DNA)" >> /tmp/protein
 }
@@ -45,7 +52,7 @@ filter(){
   grep -v '^[ 	]*$' |  sed 'N;s/	\n[ 	]*/	/g'
 }
 
-for a in $DIR/*/meta.xml; do
+for a in "$DIR"/*/meta.xml; do
   name=`dirname $a`
   dataset=`basename $name`
 
@@ -62,6 +69,7 @@ for a in $DIR/*/meta.xml; do
   done
 done
 
+set -f
 echo > $TARGET_DIR/viroblast.ini "blast+: $TARGET_DIR/blast+/bin/"
 for a in blastn tblastn tblastx; do
   echo >> $TARGET_DIR/viroblast.ini "$a: "`cat /tmp/nucleotide | tr '\n' ,`
