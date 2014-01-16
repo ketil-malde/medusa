@@ -3,10 +3,7 @@
 # Put a data set (by path) from repository
 # Uses: MDZ_REPO_METHOD MDZ_REPOSITORY
 
-error(){
-    echo "Error: $*"
-    exit -1
-}
+. "$MDZ_DIR/functions.sh"
 
 SOURCE="$1"
 

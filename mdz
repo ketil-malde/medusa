@@ -1,7 +1,8 @@
 #!/bin/bash
-set -ef -o pipefail
-
 # mdz is the front end, which in turns call other files
+
+set -e -o pipefail
+shopt -s failglob 
 
 error(){
 	echo Error: $*
@@ -20,8 +21,11 @@ read_config(){
   fi
 }
 
+set -u
+
 usage(){
   echo "Usage: mdz [cmd] [options]"
+  echo "       mdz --help"
 }
 
 serve(){
@@ -29,9 +33,10 @@ serve(){
     "$MDZ_DIR/services/$1/$1.sh" "${@:2}"
 }
 
-export MDZ_DIR MDZ_DATADIR MDZ_REPOSITORY MDZ_REPO_METHOD
-
 read_config
+export MDZ_DIR MDZ_DATADIR MDZ_REPOSITORY MDZ_REPO_METHOD MDZ_VIROBLAST_DIR MDZ_XAPIAN_DIR
+. "$MDZ_DIR/functions.sh"
+
 CMD=$1
 PARAMS="${@:2}"
 

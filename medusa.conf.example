@@ -15,4 +15,7 @@ MDZ_REPO_METHOD=scp
 MDZ_REPOSITORY=zeus:/data/genomdata
 
 # Locally accessible directory holding data sets
-MDZ_DATADIR=/tmp
+MDZ_DATADIR=/data/genomdata
+
+# Service: viroblast
+MDZ_VIROBLAST_DIR=/var/www/viroblast

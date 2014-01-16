@@ -1,8 +1,9 @@
 #!/bin/bash
-set -u -o pipefail
-
 # List data sets in a repository
 # Uses: MDZ_REPO_METHOD MDZ_REPOSITORY
+
+set -u -o pipefail
+. "$MDZ_DIR/functions.sh"
 
 [ -z "$MDZ_REPO_METHOD" ] && error "MDZ_REPO_METHOD undefined"
 [ -z "$MDZ_REPOSITORY" ]  && error "MDZ_REPOSITORY undefined"

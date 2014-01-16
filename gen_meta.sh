@@ -1,11 +1,7 @@
 #!/bin/bash
 
 # Generate a skeleton meta.xml file
-
-error(){
-	echo >&2 ERROR: $*
-	exit -1
-}
+. "$MDZ_DIR/functions.sh"
 
 mimetype(){
 	SUF=`echo "$1" | sed -e 's/^.*\.\([^.]*\)$/\1/g'`

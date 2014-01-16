@@ -1,4 +1,7 @@
 #!/bin/bash
+set -u -o pipefail
+shopt -s failglob
+. "$MDZ_DIR/functions.sh"
 
 DIR=/data/genomdata
 TARGET_DIR=/scratch/viroblast2
