@@ -15,16 +15,12 @@ Y="$(tput setaf 3)"
 N="$(tput sgr0)"
 
 error(){
-    echo
     echo "${R}ERROR:${N} $@"
-    echo
     ERROR=1
 }
 
 warn(){
-    echo
     echo "${Y}WARNING:${N} $@"
-    echo
     WARN=1
 }
 
@@ -94,12 +90,12 @@ if [ -f "$M" ]; then
   fi
  
   # Check files exist, checksums, file types
-  echo -n "Checking files: "
+  echo "Checking files:"
   while read f; do
     [ -f "$D/$f" ] || error "File $f not found."
     md5=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "@md5" -n "$M")
     if [ -z ${QUICK+x} ]; then
-       cd "$D" ; echo "$md5  $f" | md5sum -c 2> /dev/null || error "Checksum mismatch for $f"; cd - > /dev/null
+       cd "$D" ; echo "$md5  $f" | md5sum -c 2> /dev/null > /dev/null || error "Checksum mismatch for $f"; cd - > /dev/null
     else
        echo -n . 
        # echo "quick mode: skipping checksumming for $f"
