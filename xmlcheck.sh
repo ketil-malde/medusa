@@ -30,8 +30,8 @@ warn(){
 
 check_format_fasta(){
     set +e
-    grep -v '^>' "$1" | grep -v "^[A-Za-z]*$" && warn "Suspicious characters in FASTA sequence data!"
-    grep -v '^>' "$1" | cut -c100- | grep -q . && warn "FASTA file contains long lines"
+    egrep -n -m 3 -v "^>|^[A-Za-z]*$" "$1" && warn "Suspicious characters in FASTA sequence data!"
+    grep -v '^>' "$1" | cut -c100- | grep -q . && warn "FASTA file contains very long lines"
     set -e
 }
 
@@ -106,7 +106,7 @@ if [ -f "$M" ]; then
     fi
     type=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "@mimetype" -n "$M")
     grep -q "^$type\$" $MDZ_DIR/mimetypes.txt || warn "$f has unknown mimetype \"$type\""
-    if [ -z "${QUICK+x}" -a "$(echo $type | cut -c-12)" = "text/x-fasta" ]; then
+    if [ -z "${QUICK+x}" -a "$(echo $type | cut -c-12)" = "text/x-fasta" -a "$type" != "text/x-fasta-qual" ]; then
 	echo "Checking formats: $f"
 	check_format_fasta "$D/$f"
     fi
