@@ -7,6 +7,7 @@ text/x-fastq
 text/csv
 application/pdf
 text/x-gff3
+text/x-gtf
 application/vnd.oasis.opendocument.text
 application/vnd.oasis.opendocument.spreadsheet
 application/vnd.oasis.opendocument.database

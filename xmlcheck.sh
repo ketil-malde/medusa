@@ -92,19 +92,22 @@ if [ -f "$M" ]; then
   # Check files exist, checksums, file types
   echo "Checking files:"
   while read f; do
-    [ -f "$D/$f" ] || error "File $f not found."
-    md5=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "@md5" -n "$M")
-    if [ -z ${QUICK+x} ]; then
-       cd "$D" ; echo "$md5  $f" | md5sum -c 2> /dev/null > /dev/null || error "Checksum mismatch for $f"; cd - > /dev/null
+    if [ -f "$D/$f" ]; then
+      md5=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "@md5" -n "$M")
+      if [ -z ${QUICK+x} ]; then
+         echo -n "md5 checksum: "
+         cd "$D" ; echo "$md5  $f" | md5sum -c 2> /dev/null || error "Checksum mismatch for $f"; cd - > /dev/null
+      # else
+         # echo "quick mode: skipping checksumming for $f"
+      fi
+      type=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "@mimetype" -n "$M")
+      grep -q "^$type\$" $MDZ_DIR/mimetypes.txt || warn "$f has unknown mimetype \"$type\""
+      if [ -z "${QUICK+x}" -a "$(echo $type | cut -c-12)" = "text/x-fasta" -a "$type" != "text/x-fasta-qual" ]; then
+	  echo "Checking formats: $f"
+	  check_format_fasta "$D/$f"
+      fi
     else
-       echo -n . 
-       # echo "quick mode: skipping checksumming for $f"
-    fi
-    type=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "@mimetype" -n "$M")
-    grep -q "^$type\$" $MDZ_DIR/mimetypes.txt || warn "$f has unknown mimetype \"$type\""
-    if [ -z "${QUICK+x}" -a "$(echo $type | cut -c-12)" = "text/x-fasta" -a "$type" != "text/x-fasta-qual" ]; then
-	echo "Checking formats: $f"
-	check_format_fasta "$D/$f"
+       error "File $f not found."
     fi
   done < <(xmlstarlet sel -t -m //file -v @path -n "$M" | grep .)
 
@@ -114,10 +117,9 @@ if [ -f "$M" ]; then
     xmlstarlet sel -t -m //file -v @path -n "$M" | grep -q "$f" || warn "File \"$f\" not mentioned in $M"
   done
 
-  echo -n "Checking links: "
+  echo "Checking links: "
   LINKS=$(xmlstarlet sel -t -m "//dataset" -v "@id" -n "$M") || echo -n # failure is okay
   for a in $LINKS; do
-    echo -n .
     [ -d "$a" ] || warn "Dataset $a referenced, but not found"
   done
   echo
