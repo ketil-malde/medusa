@@ -15,6 +15,7 @@ warn(){
 # list all files in a dataset
 files(){
     D="$1"
+    [ -f "$D/meta.xml" ] || error "Couldn't find 'meta.xml', '$D' is not a dataset directory."
     xmlstarlet sel -t -m //file -v @path -n "$D/meta.xml" | grep .
 }
 
@@ -22,5 +23,6 @@ files(){
 files_by_type(){
     D="$1"
     T="$2"
+    [ -f "$D/meta.xml" ] || error "Couldn't find 'meta.xml', '$D' is not a dataset directory."
     xmlstarlet sel -t -m "//file[@mimetype='$T']" -v @path -n "$D/meta.xml" | grep .
 }

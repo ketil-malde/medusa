@@ -31,6 +31,11 @@ serve(){
     "$MDZ_DIR/services/$1/$1.sh" "${@:2}"
 }
 
+run(){
+    [ -x "$MDZ_DIR/run/$1.sh" ] || error "No such command: $1"
+    "$MDZ_DIR/run/$1.sh" "${@:2}"
+}
+
 read_config
 
 export MDZ_DIR MDZ_DATADIR MDZ_REPOSITORY MDZ_REPO_METHOD MDZ_VIROBLAST_DIR MDZ_XAPIAN_DIR
@@ -61,6 +66,9 @@ case $CMD in
   service)
 	serve $PARAMS
   ;;
+  run)
+	run $PARAMS
+  ;;
   --help)
 	usage
 	cat <<EOF
@@ -74,9 +82,10 @@ Available commands:
   genmeta  - generate metadata for a dataset
 
   service <serv> - service specific commmands
-
+  run <cmd>      - run pipeline to generate new datasets
 EOF
   echo "Available services: " $(ls $MDZ_DIR/services)
+  echo "Available commands: " $(ls $MDZ_DIR/run/ | grep '\.sh$' | sed -e 's/\.sh$//g')
   ;;
   *)
  	usage
