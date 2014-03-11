@@ -12,3 +12,15 @@ warn(){
     echo >&2 "${Y}Warning:${N} $@"
 }
 
+# list all files in a dataset
+files(){
+    D="$1"
+    xmlstarlet sel -t -m //file -v @path -n "$D/meta.xml" | grep .
+}
+
+# list all files with a given type
+files_by_type(){
+    D="$1"
+    T="$2"
+    xmlstarlet sel -t -m "//file[@mimetype='$T']" -v @path -n "$D/meta.xml" | grep .
+}
