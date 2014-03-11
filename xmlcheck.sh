@@ -4,6 +4,7 @@
 [ -z "$MDZ_DATADIR" ]     && error "MDZ_DATADIR undefined"
 
 set -euf -o pipefail
+. "$MDZ_DIR/functions.sh"
 
 ERROR=0
 WARN=0
@@ -109,7 +110,7 @@ if [ -f "$M" ]; then
     else
        error "File $f not found."
     fi
-  done < <(xmlstarlet sel -t -m //file -v @path -n "$M" | grep .)
+  done < <(files "$D")
 
   RFILES=$(cd "$D" && find . -type f| sed -e 's/^\.\///g' | grep -v '^.$' | tr ' ' '?' | grep -v meta.xml)
   for a in $RFILES; do
