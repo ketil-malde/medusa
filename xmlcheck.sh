@@ -26,7 +26,7 @@ warn(){
 
 check_format_fasta(){
     set +e
-    egrep -n -m 3 -v "^>|^[A-Za-z]*$" "$1" && warn "Suspicious characters in FASTA sequence data!"
+    egrep -n -m 3 -v '^>|^[A-Za-z]*$' "$1" && warn "Suspicious characters in FASTA sequence data!"
     grep -v '^>' "$1" | cut -c100- | grep -q . && warn "FASTA file contains very long lines"
     set -e
 }
@@ -35,7 +35,7 @@ check_format_fasta(){
 # Check a data set (directory) if it conforms to conventions
 D=$1
 
-echo "XMLcheck: checking $D"
+echo "Checking dataset $D"
 
 M=$D/meta.xml
 
