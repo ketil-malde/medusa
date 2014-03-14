@@ -17,6 +17,16 @@ note(){
     echo >&2 "${C}Note:${N} $@"
 }
 
+# Check status of dataset - use this in scripts etc to avoid using incorrect data sets.
+validate(){
+    D="$1"
+    [ -f "$D/meta.xml" ] || error "Couldn't find 'meta.xml', '$D' is not a dataset directory."
+    S=$(xmlstarlet sel -t -m /meta -v @status -n "$D/meta.xml")
+    echo "$S"
+    [ "$S" = "deprecated" ] && error "Dataset '$D' is deprecated!"
+    [ "$S" = "superseded" ] && warn "Dataset '$D' is superseded!"
+}
+
 # list all files in a dataset
 files(){
     D="$1"

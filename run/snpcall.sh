@@ -9,6 +9,8 @@ TMP=/tmp
 
 [ "$#" = "2" ] || error "Usage: snpcall <dataset>"
 
+validate "$1"
+
 # REF=$(files_by_type "$2" text/x-fasta-nuc)
 BAMS=$(files_by_type "$1" application/x-bam)
 TARGET=$2
