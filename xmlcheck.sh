@@ -76,7 +76,7 @@ if [ -f "$M" ]; then
    OLD=$(grep "$ID	$VER	" "$MDZ_DIR/meta_checksums") || echo -n
    if grep -q "$ID	" "$MDZ_DIR/meta_checksums"; then
       if [ -z "$OLD" ]; then
-	echo "Registering new version: $ID $VER"
+	note "Registering new version: $ID $VER"
 	echo "$ID	$VER	$META_MD5" >> $MDZ_DIR/meta_checksums
       else
 	S_OLD=$(echo "$OLD" | cut -f3)
@@ -85,7 +85,7 @@ if [ -f "$M" ]; then
         fi
       fi
    else # new dataset
-        echo "Registering new dataset: $ID $VER"
+        note "Registering new dataset: $ID $VER"
         echo "$ID	$VER	$META_MD5" >> $MDZ_DIR/meta_checksums
    fi
   fi

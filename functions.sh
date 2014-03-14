@@ -1,6 +1,7 @@
 R="$(tput setaf 1)"
 G="$(tput setaf 2)"
 Y="$(tput setaf 3)"
+C="$(tput setaf 6)"
 N="$(tput sgr0)"
 
 error(){
@@ -10,6 +11,10 @@ error(){
 
 warn(){
     echo >&2 "${Y}Warning:${N} $@"
+}
+
+note(){
+    echo >&2 "${C}Note:${N} $@"
 }
 
 # list all files in a dataset
