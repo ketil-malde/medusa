@@ -103,9 +103,13 @@ if [ -f "$M" ]; then
       fi
       type=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "@mimetype" -n "$M")
       grep -q "^$type\$" $MDZ_DIR/mimetypes.txt || warn "$f has unknown mimetype \"$type\""
-      if [ -z "${QUICK+x}" -a "$(echo $type | cut -c-12)" = "text/x-fasta" -a "$type" != "text/x-fasta-qual" ]; then
-	  echo "Checking formats: $f"
-	  check_format_fasta "$D/$f"
+      if [ -z "${QUICK+x}" ]; then
+	  case "$type" in
+	      text/x-fasta-prot|text/x-fasta-rna|text/x-fasta-dna)
+		  echo "Checking formats: $f"
+		  check_format_fasta "$D/$f"
+		  ;;
+	  esac
       fi
     else
        error "File $f not found."
