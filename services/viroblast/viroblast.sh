@@ -32,7 +32,7 @@ add_nuc(){
     else
 	(cd $TARGET_DIR/db/nucleotide/ && ln -fs $DIR/$dataset/$fpath . && formatdb $fname nucl)
     fi
-    echo "`basename $fpath` => [$2] $fdesc (DNA)" >> /tmp/nucleotide
+    echo "`basename $fpath` => [$2] $fdesc ($3)" >> /tmp/nucleotide
 }
 
 add_prot(){
@@ -45,7 +45,7 @@ add_prot(){
     else
 	(cd $TARGET_DIR/db/protein/ && ln -fs $DIR/$dataset/$fpath . && formatdb $fname prot)
     fi
-    echo "`basename $fpath` => [$2] $fdesc (DNA)" >> /tmp/protein
+    echo "`basename $fpath` => [$2] $fdesc (Prot)" >> /tmp/protein
 }
 
 filter(){
@@ -57,11 +57,11 @@ for a in "$DIR"/*/meta.xml; do
   dataset=`basename $name`
 
   xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-dna']" -v @path -o "	" -v "." -n $a | filter | while read rec; do
-    add_nuc "$rec" "$dataset"
+    add_nuc "$rec" "$dataset" "DNA"
   done
 
   xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-rna']" -v @path -o "	" -v "." -n $a | filter | while read rec; do
-    add_nuc "$rec" "$dataset" 
+    add_nuc "$rec" "$dataset" "RNA"
   done
 
   xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-prot']" -v @path -o "	" -v "." -n $a | filter | while read rec; do
