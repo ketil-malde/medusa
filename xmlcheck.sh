@@ -34,6 +34,13 @@ check_format_fasta(){
 
 
 # Check a data set (directory) if it conforms to conventions
+
+if [ $# -eq 0 ]; then
+    echo "No dataset specified"
+    echo "Usage: mdz check [dataset..]"
+    exit 0
+fi
+
 D=$1
 
 echo "Checking dataset $D"

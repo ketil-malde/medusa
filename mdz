@@ -17,12 +17,12 @@ read_config(){
   elif [ -f /etc/medusa.conf ]; then
 	source /etc/medusa.conf
   else
-	error "no config file found - exit"
+	error "no config file found! Set \$MDZ_CONFIG or add ~/.medusa.conf"
   fi
 }
 
 usage(){
-  echo "Usage: mdz [cmd] [options]"
+  echo "Usage: mdz [command] [options]"
   echo "       mdz --help"
 }
 
@@ -71,6 +71,7 @@ case $CMD in
   ;;
   --help)
 	usage
+        echo
 	cat <<EOF
 Available commands:
 
