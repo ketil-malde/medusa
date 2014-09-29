@@ -1,10 +1,11 @@
 #!/bin/bash
+set -euf -o pipefail
 
-DIR=/data/genomdata
-TARGET_DIR=/var/lib/omega/data/default
-URLPREFIX=
+DIR=$MDZ_DIR
+TARGET_DIR=$MDZ_XAPIAN_DIR
+URLPREFIX=$MDZ_XAPIAN_PREFIX
 
-for a in $DIR/*/meta.xml; do 
+for a in "$MDZ_DATADIR/*/meta.xml"; do 
   path=`dirname $a`
   name=`basename $path`
   echo url="$URLPREFIX"/$name
@@ -13,7 +14,7 @@ for a in $DIR/*/meta.xml; do
   xmlstarlet sel -t -m "//file" -o "filetype=" -v "@path" -o "   " -v "@mimetype" -n $a  | grep -v "^$"
   echo "sample= "`xmlstarlet sel -t -m "//description" -v "." $a`
   echo
-done | scriptindex -v --overwrite $TARGET_DIR $DIR/META/services/xapian-index/index.def
+done | scriptindex -v --overwrite $TARGET_DIR $DIR/services/xapian-index/index.def
 
 # rm -rf /var/lib/xapian-omega/data/default                     
 # cp -a $DIR/META/metadb /var/lib/xapian-omega/data/default       
