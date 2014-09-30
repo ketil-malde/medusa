@@ -1,18 +1,18 @@
 #!/bin/bash
-set -euf -o pipefail
+set -uf -o pipefail
 
 DIR=$MDZ_DIR
 TARGET_DIR=$MDZ_XAPIAN_DIR
 URLPREFIX=$MDZ_XAPIAN_PREFIX
 
-for a in "$MDZ_DATADIR/*/meta.xml"; do 
-  path=`dirname $a`
-  name=`basename $path`
-  echo url="$URLPREFIX"/$name
+for name in $(ls "$MDZ_DATADIR"); do 
+  path="$MDZ_DATADIR/$name"
+  a="$path/meta.xml"
+  echo url="$URLPREFIX/$name"
   echo name=$name
   xmlstarlet sel -t -m "//species" -o "species= " -v "@sciname" -o "     " -v "@tsn" -o "        " -v "." -n $a | grep -v "^$"
   xmlstarlet sel -t -m "//file" -o "filetype=" -v "@path" -o "   " -v "@mimetype" -n $a  | grep -v "^$"
-  echo "sample= "`xmlstarlet sel -t -m "//description" -v "." $a`
+  echo "sample="`xmlstarlet sel -t -m "//description" -v "." $a`
   echo
 done | scriptindex -v --overwrite $TARGET_DIR $DIR/services/xapian-index/index.def
 
