@@ -13,19 +13,26 @@ gen_prov(){
 }
 
 gen_files(){
-    files "$MDZ_DATADIR/$1"
+    echo "<table border=\"1\"><tr><th>Path</th><th>Description</th><th>Type</th><th>md5sum</th></tr>"
+    files "$MDZ_DATADIR/$1" | while read f; do
+	TYPE=$(xmlstarlet sel -t -m "//file[@path='$f']" -v @mimetype -n "$MDZ_DATADIR/$1/meta.xml")
+	DESC=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "." -n "$MDZ_DATADIR/$1/meta.xml")	
+	MD5=$(xmlstarlet  sel -t -m "//file[@path='$f']" -v @md5 -n "$MDZ_DATADIR/$1/meta.xml")
+        echo -n "  <tr> <td>$f</td> <td>$DESC</td> <td>$TYPE</td> <td>$MD5</td> </tr>"
+	echo "</tr>"
+    done
+    echo "</table>"
 }
 
 gen_index(){
     NAME="$1"
-    echo "<html><head>"
-    echo "</head><body>"
+    echo "<html><head></head><body>"
     echo "<h1>$NAME</h1>"
     gen_desc "$NAME"
     echo "<h2>Provenance</h2>"
     gen_prov "$NAME"
-    echo "<hr>"
-    gen_files "$1"
+    echo "<h2>Files</h2>"
+    gen_files "$NAME"
     echo "</body></html>"
 }
 
