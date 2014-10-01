@@ -13,7 +13,7 @@ gen_prov(){
 }
 
 gen_files(){
-    files $1
+    files "$MDZ_DATADIR/$1"
 }
 
 gen_index(){
