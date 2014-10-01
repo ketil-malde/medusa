@@ -12,7 +12,8 @@ gen_desc(){
 
 gen_prov(){
     echo "<h2>Provenance</h2>"
-    xmlstarlet sel -t -m "//provenance" -c "." "$MDZ_DATADIR/$1/meta.xml" | xsltproc "$MDZ_DIR/services/website/format.xsl" -
+    xmlstarlet sel -t -m "//provenance" -c "." "$MDZ_DATADIR/$1/meta.xml" | xsltproc "$MDZ_DIR/services/website/format.xsl" - 2>/dev/null
+    # discard warnings when dataset doesn't have provenance (sorry)
 }
 
 gen_files(){
@@ -26,8 +27,8 @@ gen_files(){
         echo "  <tr> <td><a href=\"/$MDZ_WEBSITE_DATA_PREFIX/$1/$f\">$f</a></td> <td>$DESC</td> <td>$TYPE</td> <td>$MD5</td> </tr>"
 	echo "</tr>"
 
-        mkdir -p $(dirname "$LINK")
-        ln -fs "$MDZ_DATADIR/$1/$f" "$LINK"
+        mkdir -p $(dirname "$LINK") || error "Failed to create directory - exiting"
+        ln -fs "$MDZ_DATADIR/$1/$f" "$LINK" || error "Failed to create link - exiting"
     done
     echo "</table>"
 }
@@ -52,20 +53,21 @@ build_species_table(){
     for tsn in $(cut -f1 "$TMP_ST" | sort | uniq); do
 	PAT="^$tsn	"
 	echo -n "  <tr><td>$tsn</td>" 
-        echo -n "      <td>$(grep $PAT $TMP_ST | cut -f2 | sort | uniq | tr '\n' \;)</td>"
-        echo -n "      <td>$(grep $PAT $TMP_ST | cut -f3 | sort | uniq | tr '\n' \;)</td>"
-        echo    "      <td>$(grep $PAT $TMP_ST | cut -f4 | tr '\n' ' ') </td></tr>"
+        echo -n "      <td>$(grep $PAT $TMP_ST | cut -f2 | grep . | sort | uniq | tr '\n' \;)</td>"
+        echo -n "      <td>$(grep $PAT $TMP_ST | cut -f3 | grep . | sort | uniq | tr '\n' \;)</td>"
+        echo    "      <td>$(grep $PAT $TMP_ST | cut -f4 | grep . | tr '\n' ' ') </td></tr>"
     done
     echo "</table></body></html>"
 }
 
 cp "$MDZ_DIR/services/website/index_template.html" "$MDZ_WEBSITE_DIR/index.html" || error "Couldn't create front page - exiting"
 path="$MDZ_WEBSITE_DIR/$MDZ_WEBSITE_DATA_PREFIX"
-mkdir -p "$path" "$MDZ_WEBSITE_DIR/TSN"
+mkdir -p "$path" "$MDZ_WEBSITE_DIR/TSN" || error "Failed to make directory - exiting"
 rm -f "$TMP_ST"
 
 for name in $(ls "$MDZ_DATADIR"); do 
     if [ -f "$MDZ_DATADIR/$name/meta.xml" ]; then
+	echo "Processing ${name}..."
 	mkdir -p "$path/$name"
         gen_index "$name" > "$path/$name/index.html"
 	extract_species $name >> "$TMP_ST"
