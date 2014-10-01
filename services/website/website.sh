@@ -52,10 +52,14 @@ build_species_table(){
     echo "  <table border=\"1\"><tr> <th>TSN</th> <th>sciname</th> <th>Descriptions</th><th>Datasets</th></tr>"
     for tsn in $(cut -f1 "$TMP_ST" | sort | uniq); do
 	PAT="^$tsn	"
-	echo -n "  <tr><td>$tsn</td>" 
+	echo -n "  <tr><td><a href=\"/TSN/${tsn}.html\">$tsn</a></td>"
         echo -n "      <td>$(grep $PAT $TMP_ST | cut -f2 | grep . | sort | uniq | tr '\n' \;)</td>"
         echo -n "      <td>$(grep $PAT $TMP_ST | cut -f3 | grep . | sort | uniq | tr '\n' \;)</td>"
-        echo    "      <td>$(grep $PAT $TMP_ST | cut -f4 | grep . | tr '\n' ' ') </td></tr>"
+        echo -n "      <td>"
+        for ds in $(grep "$PAT" "$TMP_ST" | cut -f4 | grep . ); do
+	    echo -n "<a href=\"/$MDZ_WEBSITE_DATA_PREFIX/$ds\">$ds</a> "
+	done
+        echo "</td></tr>"
     done
     echo "</table></body></html>"
 }
