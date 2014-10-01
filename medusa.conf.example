@@ -5,17 +5,28 @@
 
 # Where the medusa installation resides
 # should probably be something/lib/something
-MDZ_DIR=$HOME/work/datastore/META
+MDZ_DIR=/var/lib/medusa
 
 # A repository is a remote data store
 # Method to access the repository:
 MDZ_REPO_METHOD=scp
 
-# URL or other location of the repository:
-MDZ_REPOSITORY=zeus:/data/genomdata
+# URL or other location of the upstream repository:
+MDZ_REPOSITORY=
 
 # Locally accessible directory holding data sets
-MDZ_DATADIR=/data/genomdata
+MDZ_DATADIR=/data/
+
+# Service: website
+# Where to put the web presentation:
+MDZ_WEBSITE_DIR=/var/www
+MDZ_WEBSITE_DATA_PREFIX=data
+
+# Service: xapian search engine
+# Where to store the database
+MDZ_XAPIAN_DIR=/var/lib/xapian-omega/data
+MDZ_XAPIAN_DB=medusa
 
 # Service: viroblast
+# Where viroblast lives:
 MDZ_VIROBLAST_DIR=/var/www/viroblast
