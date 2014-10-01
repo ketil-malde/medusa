@@ -10,6 +10,7 @@ error(){
 }
 
 read_config(){
+  ENV=$(env | grep '^MDZ')
   if [ -f "$MDZ_CONFIG" ]; then
 	source "$MDZ_CONFIG"
   elif [ -f ~/.medusa.conf ]; then
@@ -19,6 +20,7 @@ read_config(){
   else
 	error "no config file found! Set \$MDZ_CONFIG or add ~/.medusa.conf"
   fi
+  eval "$ENV"
 }
 
 usage(){
