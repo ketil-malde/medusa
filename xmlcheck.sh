@@ -102,7 +102,7 @@ if [ -f "$M" ]; then
   while read f; do
     if [ -f "$D/$f" ]; then
       md5=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "@md5" -n "$M")
-      if [ -z ${QUICK+x} ]; then
+      if [ "${MDZ_QUICK_MODE}" = "0" ]; then
          echo -n "md5 checksum: "
          cd "$D" ; echo "$md5  $f" | md5sum -c 2> /dev/null || error "Checksum mismatch for $f"; cd - > /dev/null
       # else
@@ -110,7 +110,7 @@ if [ -f "$M" ]; then
       fi
       type=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "@mimetype" -n "$M")
       grep -q "^$type\$" $MDZ_DIR/mimetypes.txt || warn "$f has unknown mimetype \"$type\""
-      if [ -z "${QUICK+x}" ]; then
+      if [ "${MDZ_QUICK_MODE}" = "0" ]; then
 	  case "$type" in
 	      text/x-fasta-prot|text/x-fasta-rna|text/x-fasta-dna)
 		  echo "Checking formats: $f"

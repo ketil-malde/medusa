@@ -3,6 +3,9 @@
 # Typically stored as /etc/medusa.conf or per user in $HOME/.medusa.conf
 # These variables can also be set directly in the shell
 
+# Whether to skip md5sum and other very time-consuming checks
+MDZ_QUICK_MODE=1
+
 # Where the medusa installation resides
 # should probably be something/lib/something
 MDZ_DIR=/var/lib/medusa
