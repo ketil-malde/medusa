@@ -19,7 +19,7 @@ gen_files(){
 	DESC=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "." -n "$MDZ_DATADIR/$1/meta.xml")
 	MD5=$(xmlstarlet  sel -t -m "//file[@path='$f']" -v @md5 -n "$MDZ_DATADIR/$1/meta.xml")
 	LINK="$MDZ_WEBSITE_DIR/$MDZ_WEBSITE_DATA_PREFIX/$1/$f"
-        echo "  <tr> <td><a href=\"$LINK\">$f</a></td> <td>$DESC</td> <td>$TYPE</td> <td>$MD5</td> </tr>"
+        echo "  <tr> <td><a href=\"/$MDZ_WEBSITE_DATA_PREFIX/$1/$f\">$f</a></td> <td>$DESC</td> <td>$TYPE</td> <td>$MD5</td> </tr>"
 	echo "</tr>"
 
         mkdir -p $(dirname "$LINK")
