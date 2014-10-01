@@ -64,6 +64,16 @@ build_species_table(){
     echo "</table></body></html>"
 }
 
+build_species_lists(){
+    for tsn in $(cut -f1 "$TMP_ST" | sort | uniq); do
+	PAT="^$tsn	"
+	OUT="$MDZ_WEBSITE_DIR/TSN/${tsn}.html"
+	echo "<html><body><pre>"     > "$OUT"
+	grep "$PAT" "$TMP_ST"       >> "$OUT"
+        echo "</pre></body></html>" >> "$OUT"
+    done
+}
+
 cp "$MDZ_DIR/services/website/index_template.html" "$MDZ_WEBSITE_DIR/index.html" || error "Couldn't create front page - exiting"
 path="$MDZ_WEBSITE_DIR/$MDZ_WEBSITE_DATA_PREFIX"
 mkdir -p "$path" "$MDZ_WEBSITE_DIR/TSN" || error "Failed to make directory - exiting"
@@ -81,3 +91,4 @@ for name in $(ls "$MDZ_DATADIR"); do
 done
 
 build_species_table > "$MDZ_WEBSITE_DIR/TSN/index.html"
+build_species_lists
