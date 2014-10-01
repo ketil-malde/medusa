@@ -5,11 +5,11 @@ set -uf -o pipefail
 
 # TODO: convert to HTML - generate links, etc
 gen_desc(){
-    xmlstarlet sel -t -m "//description" -v "." "$MDZ_DATADIR/$1/meta.xml"
+    xmlstarlet sel -t -m "//description" -c "." "$MDZ_DATADIR/$1/meta.xml" | xsltproc "$MDZ_DIR/services/website/format.xsl" -
 }
 
 gen_prov(){
-    xmlstarlet sel -t -m "//provenance" -v "." "$MDZ_DATADIR/$1/meta.xml"
+    xmlstarlet sel -t -m "//provenance" -c "." "$MDZ_DATADIR/$1/meta.xml" | xsltproc "$MDZ_DIR/services/website/format.xsl" -
 }
 
 gen_files(){
@@ -40,14 +40,21 @@ gen_index(){
     echo "</body></html>"
 }
 
+extract_species(){
+    FILE="$MDZ_DATADIR/$1/meta.xml"
+    xmlstarlet sel -t -m "//species" -v "@tsn" -o "	"  -v "@sciname" -o "	" -v "." -n "$FILE" 
+}
+
 cp "$MDZ_DIR/services/website/index_template.html" "$MDZ_WEBSITE_DIR/index.html" || error "Couldn't create front page - exiting"
 path="$MDZ_WEBSITE_DIR/$MDZ_WEBSITE_DATA_PREFIX"
 mkdir -p "$path"
+rm -f /tmp/tmp_species_list
 
 for name in $(ls "$MDZ_DATADIR"); do 
     if [ -f "$MDZ_DATADIR/$name/meta.xml" ]; then
 	mkdir -p "$path/$name"
         gen_index "$name" > "$path/$name/index.html"
+	extract_species $name >> /tmp/tmp_species_list
     else 
        warn "$name does not appear to be a valid dataset - skipping"
     fi
