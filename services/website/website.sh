@@ -5,14 +5,17 @@ set -uf -o pipefail
 
 # TODO: convert to HTML - generate links, etc
 gen_desc(){
+    echo "<h1>$1</h1>"
     xmlstarlet sel -t -m "//description" -c "." "$MDZ_DATADIR/$1/meta.xml" | xsltproc "$MDZ_DIR/services/website/format.xsl" -
 }
 
 gen_prov(){
+    echo "<h2>Provenance</h2>"
     xmlstarlet sel -t -m "//provenance" -c "." "$MDZ_DATADIR/$1/meta.xml" | xsltproc "$MDZ_DIR/services/website/format.xsl" -
 }
 
 gen_files(){
+    echo "<h2>Files</h2>"
     echo "<table border=\"1\"><tr><th>Path</th><th>Description</th><th>Type</th><th>md5sum</th></tr>"
     files "$MDZ_DATADIR/$1" | while read f; do
 	TYPE=$(xmlstarlet sel -t -m "//file[@path='$f']" -v @mimetype -n "$MDZ_DATADIR/$1/meta.xml")
@@ -31,11 +34,8 @@ gen_files(){
 gen_index(){
     NAME="$1"
     echo "<html><head></head><body>"
-    echo "<h1>$NAME</h1>"
     gen_desc "$NAME"
-    echo "<h2>Provenance</h2>"
     gen_prov "$NAME"
-    echo "<h2>Files</h2>"
     gen_files "$NAME"
     echo "</body></html>"
 }
