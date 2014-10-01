@@ -3,7 +3,8 @@ set -uf -o pipefail
 
 . "$MDZ_DIR/functions.sh"
 
-# TODO: convert to HTML - generate links, etc
+TMP_ST=/tmp/tmp_species_list
+
 gen_desc(){
     echo "<h1>$1</h1>"
     xmlstarlet sel -t -m "//description" -c "." "$MDZ_DATADIR/$1/meta.xml" | xsltproc "$MDZ_DIR/services/website/format.xsl" -
@@ -42,21 +43,35 @@ gen_index(){
 
 extract_species(){
     FILE="$MDZ_DATADIR/$1/meta.xml"
-    xmlstarlet sel -t -m "//species" -v "@tsn" -o "	"  -v "@sciname" -o "	" -v "." -n "$FILE" 
+    xmlstarlet sel -t -m "//species" -v "@tsn" -o "	"  -v "@sciname" -o "	" -v "." -o "	$1" -n "$FILE" 
+}
+
+build_species_table(){
+    echo "<html><body><h1>Species referenced</h1>"
+    echo "  <table border=\"1\"><tr> <th>TSN</th> <th>sciname</th> <th>Descriptions</th><th>Datasets</th></tr>"
+    for tsn in $(cut -f1 "$TMP_ST" | sort | uniq); do
+	PAT="^$tsn	"
+	echo -n "  <tr><td>$tsn</td>" 
+        echo -n "      <td>$(grep $PAT $TMP_ST | cut -f2 | sort | uniq | tr '\n' \;)</td>"
+        echo -n "      <td>$(grep $PAT $TMP_ST | cut -f3 | sort | uniq | tr '\n' \;)</td>"
+        echo    "      <td>$(grep $PAT $TMP_ST | cut -f4 | tr '\n' ' ') </td></tr>"
+    done
+    echo "</table></body></html>"
 }
 
 cp "$MDZ_DIR/services/website/index_template.html" "$MDZ_WEBSITE_DIR/index.html" || error "Couldn't create front page - exiting"
 path="$MDZ_WEBSITE_DIR/$MDZ_WEBSITE_DATA_PREFIX"
-mkdir -p "$path"
-rm -f /tmp/tmp_species_list
+mkdir -p "$path" "$MDZ_WEBSITE_DIR/TSN"
+rm -f "$TMP_ST"
 
 for name in $(ls "$MDZ_DATADIR"); do 
     if [ -f "$MDZ_DATADIR/$name/meta.xml" ]; then
 	mkdir -p "$path/$name"
         gen_index "$name" > "$path/$name/index.html"
-	extract_species $name >> /tmp/tmp_species_list
+	extract_species $name >> "$TMP_ST"
     else 
        warn "$name does not appear to be a valid dataset - skipping"
     fi
 done
-    
+
+build_species_table > "$MDZ_WEBSITE_DIR/TSN/index.html"
