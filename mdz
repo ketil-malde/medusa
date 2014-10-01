@@ -10,7 +10,7 @@ error(){
 }
 
 read_config(){
-  ENV=$(env | grep '^MDZ')
+  ENV=$(env | grep '^MDZ') || true
   if [ -f "$MDZ_CONFIG" ]; then
 	source "$MDZ_CONFIG"
   elif [ -f ~/.medusa.conf ]; then
