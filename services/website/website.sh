@@ -68,7 +68,10 @@ build_species_lists(){
     for tsn in $(cut -f1 "$TMP_ST" | sort | uniq); do
 	PAT="^$tsn	"
 	OUT="$MDZ_WEBSITE_DIR/TSN/${tsn}.html"
-	echo "<html><body><pre>"     > "$OUT"
+	echo "<html><body>"          > "$OUT"
+	echo "<h1>Species TSN=$tsn</h1>" >> "$OUT"
+	echo "<a href=\"http://www.marinespecies.org/aphia.php?p=taxlist&tComp=is&searchpar=3&tName=$tsn\">WoRMS description</a>" >> "$OUT"
+        echo "<pre>"                >> "$OUT"
 	grep "$PAT" "$TMP_ST"       >> "$OUT"
         echo "</pre></body></html>" >> "$OUT"
     done
