@@ -19,17 +19,18 @@ gen_prov(){
 gen_files(){
     echo "<h2>Files</h2>"
     echo "<table border=\"1\"><tr><th>Path</th><th>Description</th><th>Type</th><th>md5sum</th></tr>"
+    DEST="$MDZ_WEBSITE_DIR/$MDZ_WEBSITE_DATA_PREFIX/$1"
     files "$MDZ_DATADIR/$1" | while read f; do
 	TYPE=$(xmlstarlet sel -t -m "//file[@path='$f']" -v @mimetype -n "$MDZ_DATADIR/$1/meta.xml")
 	DESC=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "." -n "$MDZ_DATADIR/$1/meta.xml")
 	MD5=$(xmlstarlet  sel -t -m "//file[@path='$f']" -v @md5 -n "$MDZ_DATADIR/$1/meta.xml")
-	LINK="$MDZ_WEBSITE_DIR/$MDZ_WEBSITE_DATA_PREFIX/$1/$f"
         echo "  <tr> <td><a href=\"/$MDZ_WEBSITE_DATA_PREFIX/$1/$f\">$f</a></td> <td>$DESC</td> <td>$TYPE</td> <td>$MD5</td> </tr>"
 	echo "</tr>"
 
-        mkdir -p $(dirname "$LINK") || error "Failed to create directory - exiting"
-        ln -fs "$MDZ_DATADIR/$1/$f" "$LINK" || error "Failed to create link - exiting"
+        mkdir -p "$DEST" || error "Failed to create directory - exiting"
+        ln -fs "$MDZ_DATADIR/$1/$f" "$DEST" || error "Failed to create link - exiting"
     done
+    ln -fs "$MDZ_DATADIR/$1/meta.xml" "$DEST"
     echo "</table>"
 }
 
@@ -56,7 +57,7 @@ build_species_table(){
         echo -n "      <td>$(grep $PAT $TMP_ST | cut -f2 | grep . | sort | uniq | tr '\n' \;)</td>"
         echo -n "      <td>$(grep $PAT $TMP_ST | cut -f3 | grep . | sort | uniq | tr '\n' \;)</td>"
         echo -n "      <td>"
-        for ds in $(grep "$PAT" "$TMP_ST" | cut -f4 | grep . ); do
+        grep "$PAT" "$TMP_ST" | cut -f4 | grep . | while read ds; do
 	    echo -n "<a href=\"/$MDZ_WEBSITE_DATA_PREFIX/$ds\">$ds</a> "
 	done
         echo "</td></tr>"
@@ -75,13 +76,18 @@ build_species_lists(){
 	echo "<html><body>"          > "$OUT"
 	echo "<h1>Species TSN=$tsn</h1>" >> "$OUT"
 	mk_worms_link "$tsn" >> "$OUT"
-        echo "<h3>Scientific name</h3><p>" >> "$OUT"
+        echo "<h3>Scientific name(s)</h3><p>" >> "$OUT"
 	grep "$PAT" "$TMP_ST" | cut -f2 | sort | uniq -c | sort -n | cut -c9- | sed -e 's/$/<br>/g'  >> "$OUT"
-        echo "</p><h3>Vernacular name</h3><p>" >> "$OUT"
+        echo "</p><h3>Vernacular name(s)</h3><p>" >> "$OUT"
 	grep "$PAT" "$TMP_ST" | cut -f3 | sort | uniq -c | sort -n | cut -c9- | sed -e 's/$/<br>/g'  >> "$OUT"
-        echo "</p><h3>Data sets</h3><pre>" >> "$OUT"
-	grep "$PAT" "$TMP_ST" | cut -f2-   >> "$OUT"
-        echo "</pre></body></html>" >> "$OUT"
+        echo "</p><h3>Data sets</h3><table border=\"1\"><tr><th>Dataset</th><th>Scientific name</th><th>Description</th></tr>" >> "$OUT"
+	grep "$PAT" "$TMP_ST" | cut -f2- | while read line; do
+	    ds=$(echo "$line" | cut -f3)
+	    sn=$(echo "$line" | cut -f1)
+	    vn=$(echo "$line" | cut -f2)
+	    echo "<tr><td><a href=\"/$MDZ_WEBSITE_DATA_PREFIX/$ds\">$ds</a></td> <td>$sn</td> <td>$vn</td></tr> " >> "$OUT"
+	done
+        echo "</table></body></html>" >> "$OUT"
     done
 }
 
