@@ -7,7 +7,7 @@ for name in $(ls "$MDZ_DATADIR"); do
   if [ -f "$MDZ_DATADIR/$name/meta.xml" ]; then
   path="$MDZ_DATADIR/$name"
   a="$path/meta.xml"
-  echo url="$MDZ_WEBSITE_DIR/$MDZ_WEBSITE_DATA_PREFIX/$name"
+  echo url="/$MDZ_WEBSITE_DATA_PREFIX/$name"
   echo name=$name
   xmlstarlet sel -t -m "//species" -o "species= " -v "@sciname" -o "     " -v "@tsn" -o "        " -v "." -n $a | grep -v "^$"
   xmlstarlet sel -t -m "//file" -o "filetype=" -v "@path" -o "   " -v "@mimetype" -n $a  | grep -v "^$"
