@@ -81,10 +81,10 @@ build_species_lists(){
         echo "</p><h3>Vernacular name(s)</h3><p>" >> "$OUT"
 	grep "$PAT" "$TMP_ST" | cut -f3 | sort | uniq -c | sort -n | cut -c9- | sed -e 's/$/<br>/g'  >> "$OUT"
         echo "</p><h3>Data sets</h3><table border=\"1\"><tr><th>Dataset</th><th>Scientific name</th><th>Description</th></tr>" >> "$OUT"
-	grep "$PAT" "$TMP_ST" | cut -f2- | while read line; do
-	    ds=$(echo "$line" | cut -f3)
-	    sn=$(echo "$line" | cut -f1)
-	    vn=$(echo "$line" | cut -f2)
+	grep "$PAT" "$TMP_ST" | while read line; do
+	    ds=$(echo "$line" | cut -f4)
+	    sn=$(echo "$line" | cut -f2)
+	    vn=$(echo "$line" | cut -f3)
 	    echo "<tr><td><a href=\"/$MDZ_WEBSITE_DATA_PREFIX/$ds\">$ds</a></td> <td>$sn</td> <td>$vn</td></tr> " >> "$OUT"
 	done
         echo "</table></body></html>" >> "$OUT"
