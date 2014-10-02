@@ -64,13 +64,17 @@ build_species_table(){
     echo "</table></body></html>"
 }
 
+mk_worms_link(){
+    echo "<a href=\"http://www.marinespecies.org/aphia.php?p=taxlist&tComp=is&searchpar=3&tName=$1\">WoRMS description</a>"
+}
+
 build_species_lists(){
     for tsn in $(cut -f1 "$TMP_ST" | sort | uniq); do
 	PAT="^$tsn	"
 	OUT="$MDZ_WEBSITE_DIR/TSN/${tsn}.html"
 	echo "<html><body>"          > "$OUT"
 	echo "<h1>Species TSN=$tsn</h1>" >> "$OUT"
-	echo "<a href=\"http://www.marinespecies.org/aphia.php?p=taxlist&tComp=is&searchpar=3&tName=$tsn\">WoRMS description</a>" >> "$OUT"
+	mk_worms_link "$tsn" >> "$OUT"
         echo "<pre>"                >> "$OUT"
 	grep "$PAT" "$TMP_ST"       >> "$OUT"
         echo "</pre></body></html>" >> "$OUT"
