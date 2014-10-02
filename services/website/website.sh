@@ -75,8 +75,12 @@ build_species_lists(){
 	echo "<html><body>"          > "$OUT"
 	echo "<h1>Species TSN=$tsn</h1>" >> "$OUT"
 	mk_worms_link "$tsn" >> "$OUT"
-        echo "<pre>"                >> "$OUT"
-	grep "$PAT" "$TMP_ST"       >> "$OUT"
+        echo "<p3>Scientific name</p3><p>" >> "$OUT"
+	grep "$PAT" "$TMP_ST" | cut -f2 | sort | uniq -c | sort -n | cut -c9- | sed -e 's/$/<br>/g'  >> "$OUT"
+        echo "</p><p2>Vernacular name</p2><p>" >> "$OUT"
+	grep "$PAT" "$TMP_ST" | cut -f3 | sort | uniq -c | sort -n | cut -c9- | sed -e 's/$/<br>/g'  >> "$OUT"
+        echo "</p><p2>Data sets</p2><pre>" >> "$OUT"
+	grep "$PAT" "$TMP_ST" | cut -f2-   >> "$OUT"
         echo "</pre></body></html>" >> "$OUT"
     done
 }
