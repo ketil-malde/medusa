@@ -4,6 +4,32 @@ set -uf -o pipefail
 . "$MDZ_DIR/functions.sh"
 
 TMP_ST=/tmp/tmp_species_list
+path="$MDZ_WEBSITE_DIR/$MDZ_WEBSITE_DATA_PREFIX"
+
+htmlhead(){
+    echo "<html><head><title>$1</title>"
+    cat <<EOF
+      <link rel="shortcut icon" href="/images/favicon.jpg" />
+      <link rel="stylesheet" type="text/css" href="/css/default.css" />
+    </head>
+    <body>
+      <div id="navbar">
+        <a href="/data">browse</a>
+        <a href="/TSN">index</a>
+        <a href="/cgi-bin/omega/omega">search</a>
+	<form style="display: inline;" method="POST" action="/cgi-bin/omega/omega">
+	  <input style="display: inline; margin: 2px 20px;" type="text" name="P" value="" />
+	  <input type="hidden" name="DB" value="medusa" />
+	</form>
+    </div>
+    <div id="header">
+EOF
+    echo "<h1>$1</h1></div>"
+}
+
+htmlfoot(){
+    echo "</body></html>"
+}
 
 gen_desc(){
     echo "<h1>$1</h1>"
@@ -36,11 +62,11 @@ gen_files(){
 
 gen_index(){
     NAME="$1"
-    echo "<html><head></head><body>"
+    htmlhead "$1"
     gen_desc "$NAME"
     gen_prov "$NAME"
     gen_files "$NAME"
-    echo "</body></html>"
+    htmlfoot
 }
 
 extract_species(){
@@ -49,7 +75,7 @@ extract_species(){
 }
 
 build_species_table(){
-    echo "<html><body><h1>Species referenced</h1>"
+    htmlhead "Species index"
     echo "  <table border=\"1\"><tr> <th>TSN</th> <th>sciname</th> <th>Descriptions</th><th>Datasets</th></tr>"
     for tsn in $(cut -f1 "$TMP_ST" | sort | uniq); do
 	PAT="^$tsn	"
@@ -62,7 +88,7 @@ build_species_table(){
 	done
         echo "</td></tr>"
     done
-    echo "</table></body></html>"
+    htmlfoot
 }
 
 mk_worms_link(){
@@ -73,8 +99,8 @@ build_species_lists(){
     for tsn in $(cut -f1 "$TMP_ST" | sort | uniq); do
 	PAT="^$tsn	"
 	OUT="$MDZ_WEBSITE_DIR/TSN/${tsn}.html"
-	echo "<html><body>"          > "$OUT"
-	echo "<h1>Species TSN=$tsn</h1>" >> "$OUT"
+
+	htmlhead "Species TSN=$tsn" > "$OUT"
 	mk_worms_link "$tsn" >> "$OUT"
         echo "<h3>Scientific name(s)</h3><p>" >> "$OUT"
 	grep "$PAT" "$TMP_ST" | cut -f2 | sort | uniq -c | sort -n | cut -c9- | sed -e 's/$/<br>/g'  >> "$OUT"
@@ -87,21 +113,29 @@ build_species_lists(){
 	    vn=$(echo "$line" | cut -f3)
 	    echo "<tr><td><a href=\"/$MDZ_WEBSITE_DATA_PREFIX/$ds\">$ds</a></td> <td>$sn</td> <td>$vn</td></tr> " >> "$OUT"
 	done
-        echo "</table></body></html>" >> "$OUT"
+        echo "</table>" >> "$OUT"
+	htmlfoot >> "$OUT"
     done
 }
 
-cp "$MDZ_DIR/services/website/index_template.html" "$MDZ_WEBSITE_DIR/index.html" || error "Couldn't create front page - exiting"
-path="$MDZ_WEBSITE_DIR/$MDZ_WEBSITE_DATA_PREFIX"
-mkdir -p "$path" "$MDZ_WEBSITE_DIR/TSN" || error "Failed to make directory - exiting"
-rm -f "$TMP_ST"
 
+# Build front page
+htmlhead "Medusa Data Repository" > "$MDZ_WEBSITE_DIR/index.html" || error "Couldn't create front page - exiting"
+cat "$MDZ_DIR/services/website/index_template.html" >> "$MDZ_WEBSITE_DIR/index.html" 
+htmlfoot >> "$MDZ_WEBSITE_DIR/index.html" 
+
+# Build directories
+mkdir -p "$path" "$MDZ_WEBSITE_DIR/TSN" "$MDZ_WEBSITE_DIR/css" || error "Failed to make directory - exiting"
+cp "$MDZ_DIR/services/website/default.css" "$MDZ_WEBSITE_DIR/css/"
+
+# Iterate over data sets
+rm -f "$TMP_ST"
 for name in $(ls "$MDZ_DATADIR"); do 
     if [ -f "$MDZ_DATADIR/$name/meta.xml" ]; then
 	echo "Processing ${name}..."
 	mkdir -p "$path/$name"
         gen_index "$name" > "$path/$name/index.html"
-	extract_species $name >> "$TMP_ST"
+	extract_species "$name" >> "$TMP_ST"
     else 
        warn "$name does not appear to be a valid dataset - skipping"
     fi
