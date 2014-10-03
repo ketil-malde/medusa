@@ -99,8 +99,14 @@ build_species_lists(){
     for tsn in $(cut -f1 "$TMP_ST" | sort | uniq); do
 	PAT="^$tsn	"
 	OUT="$MDZ_WEBSITE_DIR/TSN/${tsn}.html"
-
-	htmlhead "Species TSN=$tsn" > "$OUT"
+	CNAME=$(grep "$PAT" "$TMP_ST" | cut -f3 | sort | uniq -c | sort -n | head -1 | cut -c9-)
+	SNAME=$(grep "$PAT" "$TMP_ST" | cut -f2 | sort | uniq -c | sort -n | head -1 | cut -c9-)
+	if [ -z "$SNAME" ]; then
+	    TITLE="$CNAME"
+	else
+	    TITLE="$CNAME <em>($SNAME)</em>"
+	fi
+	htmlhead "$TITLE" > "$OUT"
 	mk_worms_link "$tsn" >> "$OUT"
         echo "<h3>Scientific name(s)</h3><p>" >> "$OUT"
 	grep "$PAT" "$TMP_ST" | cut -f2 | sort | uniq -c | sort -n | cut -c9- | sed -e 's/$/<br>/g'  >> "$OUT"
