@@ -50,8 +50,9 @@ caption {
    text-align: left;
 }
 
+/*
 table {
-   border: 1px solid black;
+   border: 1px solid black; 
 }
 
 th {
@@ -62,7 +63,9 @@ th {
 }
 
 th a { color: white; }
+*/
 
+td { padding: 0.1em 1em ; }
 th a:hover { color: #FA2; }
 
 div.footnotes p {
@@ -77,6 +80,10 @@ div#header {
 div#header h1 {
    margin: 0;
    padding: 0.2em 3em;
+}
+
+div#header h1 {
+   margin: 0;
 }
 
 div#footer { border-top: solid 4px #666; }

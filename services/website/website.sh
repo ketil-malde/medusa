@@ -15,8 +15,9 @@ htmlhead(){
     <body>
       <div id="navbar">
         <a href="/">home</a>
-        <a href="/data">browse</a>
+        <a href="/data">browse</a> <!-- NB this is a variable -->
         <a href="/TSN">index</a>
+	<a href="mailto:ketil.malde@imr.no">feedback</a>
         <a href="/cgi-bin/omega/omega">search</a>
 	<form style="display: inline;" method="POST" action="/cgi-bin/omega/omega">
 	  <input style="display: inline; margin: 2px 20px;" type="text" name="P" value="" />
@@ -45,7 +46,7 @@ gen_prov(){
 
 gen_files(){
     echo "<h2>Files</h2>"
-    echo "<table border=\"1\"><tr><th>Path</th><th>Description</th><th>Type</th><th>md5sum</th></tr>"
+    echo "<table><tr><th>Path</th><th>Description</th><th>Type</th><th>md5sum</th></tr><tr><th colspan=\"4\"><hr></th></tr>"
     DEST="$MDZ_WEBSITE_DIR/$MDZ_WEBSITE_DATA_PREFIX/$1"
     files "$MDZ_DATADIR/$1" | while read f; do
 	TYPE=$(xmlstarlet sel -t -m "//file[@path='$f']" -v @mimetype -n "$MDZ_DATADIR/$1/meta.xml")
@@ -77,7 +78,7 @@ extract_species(){
 
 build_species_table(){
     htmlhead "Species index"
-    echo "  <table border=\"1\"><tr> <th>TSN</th> <th>sciname</th> <th>Descriptions</th><th>Datasets</th></tr>"
+    echo "  <table><tr> <th>TSN</th> <th>sciname</th> <th>Descriptions</th><th>Datasets</th></tr><tr><th colspan=\"4\"><hr></th></tr>"
     for tsn in $(cut -f1 "$TMP_ST" | sort | uniq); do
 	PAT="^$tsn	"
 	echo -n "  <tr><td><a href=\"/TSN/${tsn}.html\">$tsn</a></td>"
@@ -89,6 +90,7 @@ build_species_table(){
 	done
         echo "</td></tr>"
     done
+    echo "</table>"
     htmlfoot
 }
 
@@ -113,7 +115,7 @@ build_species_lists(){
 	grep "$PAT" "$TMP_ST" | cut -f2 | sort | uniq -c | sort -n | cut -c9- | sed -e 's/$/<br>/g'  >> "$OUT"
         echo "</p><h3>Vernacular name(s)</h3><p>" >> "$OUT"
 	grep "$PAT" "$TMP_ST" | cut -f3 | sort | uniq -c | sort -n | cut -c9- | sed -e 's/$/<br>/g'  >> "$OUT"
-        echo "</p><h3>Data sets</h3><table border=\"1\"><tr><th>Dataset</th><th>Scientific name</th><th>Description</th></tr>" >> "$OUT"
+        echo "</p><h3>Data sets</h3><table><tr><th>Dataset</th><th>Scientific name</th><th>Description</th></tr><tr><th colspan=\"3\"><hr></th></tr>" >> "$OUT"
 	grep "$PAT" "$TMP_ST" | while read line; do
 	    ds=$(echo "$line" | cut -f4)
 	    sn=$(echo "$line" | cut -f2)
@@ -134,6 +136,7 @@ htmlfoot >> "$MDZ_WEBSITE_DIR/index.html"
 # Build directories
 mkdir -p "$path" "$MDZ_WEBSITE_DIR/TSN" "$MDZ_WEBSITE_DIR/css" || error "Failed to make directory - exiting"
 cp "$MDZ_DIR/services/website/default.css" "$MDZ_WEBSITE_DIR/css/"
+cp "$MDZ_DIR/services/website/HEADER.html" "$path/"
 
 # Iterate over data sets
 rm -f "$TMP_ST"
