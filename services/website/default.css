@@ -61,6 +61,10 @@ th {
     font-weight: normal;
 }
 
+th a { color: white; }
+
+th a:hover { color: #FA2; }
+
 div.footnotes p {
     text-indent: 0px;
 }
@@ -72,7 +76,7 @@ div#header {
 
 div#header h1 {
    margin: 0;
-   padding: 10px 100px;
+   padding: 0.2em 3em;
 }
 
 div#footer { border-top: solid 4px #666; }

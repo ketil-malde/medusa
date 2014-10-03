@@ -14,6 +14,7 @@ htmlhead(){
     </head>
     <body>
       <div id="navbar">
+        <a href="/">home</a>
         <a href="/data">browse</a>
         <a href="/TSN">index</a>
         <a href="/cgi-bin/omega/omega">search</a>
