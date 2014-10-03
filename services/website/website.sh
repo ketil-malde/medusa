@@ -6,6 +6,24 @@ set -uf -o pipefail
 TMP_ST=/tmp/tmp_species_list
 path="$MDZ_WEBSITE_DIR/$MDZ_WEBSITE_DATA_PREFIX"
 
+htmlnavbar(){
+    cat <<EOF
+      <div id="navbar">
+        <a href="/">home</a>
+EOF
+    echo "<a href=\"/$MDZ_WEBSITE_DATA_PREFIX\">browse</a>"
+    cat <<EOF
+        <a href="/TSN">index</a>
+        <a href="mailto:ketil.malde@imr.no">feedback</a>
+        <a href="/cgi-bin/omega/omega">search</a>
+	<form style="display: inline;" method="POST" action="/cgi-bin/omega/omega">
+	  <input style="display: inline; margin: 2px 20px;" type="text" name="P" value="" />
+	  <input type="hidden" name="DB" value="medusa" />
+	</form>
+    </div>
+EOF
+}
+
 htmlhead(){
     echo "<html><head><title>$1</title>"
     cat <<EOF
@@ -13,20 +31,9 @@ htmlhead(){
       <link rel="stylesheet" type="text/css" href="/css/default.css" />
     </head>
     <body>
-      <div id="navbar">
-        <a href="/">home</a>
-        <a href="/data">browse</a> <!-- NB this is a variable -->
-        <a href="/TSN">index</a>
-	<a href="mailto:ketil.malde@imr.no">feedback</a>
-        <a href="/cgi-bin/omega/omega">search</a>
-	<form style="display: inline;" method="POST" action="/cgi-bin/omega/omega">
-	  <input style="display: inline; margin: 2px 20px;" type="text" name="P" value="" />
-	  <input type="hidden" name="DB" value="medusa" />
-	</form>
-    </div>
-    <div id="header">
 EOF
-    echo "<h1>$1</h1></div>"
+    htmlnavbar
+    echo "<div id=\"header\"><h1>$1</h1></div>"
 }
 
 htmlfoot(){
