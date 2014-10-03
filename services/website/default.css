@@ -75,6 +75,7 @@ div.footnotes p {
 div#header { 
    width: 100%;
    background: #ACF;
+   margin: 0 0 20px 0;
 }
 
 div#header h1 {
