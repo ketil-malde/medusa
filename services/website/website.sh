@@ -114,7 +114,7 @@ build_species_table(){
 
 # Link from a TSN to WoRMS entry
 mk_worms_link(){
-    echo "<a href=\"http://www.marinespecies.org/aphia.php?p=taxlist&tComp=is&searchpar=3&tName=$1\">WoRMS description</a>"
+    echo "Search for <a href=\"http://www.marinespecies.org/aphia.php?p=taxlist&tComp=is&searchpar=3&tName=$1\">TSN=$1</a> in the WoRMS database."
 }
 
 # For a each TSN in the species table, generate a specific index listing datasets etc
@@ -140,7 +140,7 @@ build_species_lists(){
 	    ds=$(echo "$line" | cut -f4)
 	    sn=$(echo "$line" | cut -f2)
 	    vn=$(echo "$line" | cut -f3)
-	    echo "<tr><td><a href=\"/$MDZ_WEBSITE_DATA_PREFIX/$ds\">$ds</a></td> <td>$sn</td> <td>$vn</td></tr> " >> "$OUT"
+	    echo "<tr><td><a href=\"/$MDZ_WEBSITE_DATA_PREFIX/$ds\">$ds</a></td> <td><em>$sn</em></td> <td>$vn</td></tr> " >> "$OUT"
 	done
         echo "</table>" >> "$OUT"
 	htmlfoot >> "$OUT"
