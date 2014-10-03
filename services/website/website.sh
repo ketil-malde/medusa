@@ -41,7 +41,6 @@ htmlfoot(){
 }
 
 gen_desc(){
-    echo "<h1>$1</h1>"
     xmlstarlet sel -t -m "//description" -c "." "$MDZ_DATADIR/$1/meta.xml" | xsltproc "$MDZ_DIR/services/website/format.xsl" -
 }
 
@@ -143,7 +142,17 @@ htmlfoot >> "$MDZ_WEBSITE_DIR/index.html"
 # Build directories
 mkdir -p "$path" "$MDZ_WEBSITE_DIR/TSN" "$MDZ_WEBSITE_DIR/css" || error "Failed to make directory - exiting"
 cp "$MDZ_DIR/services/website/default.css" "$MDZ_WEBSITE_DIR/css/"
-cp "$MDZ_DIR/services/website/HEADER.html" "$path/"
+
+cat > "$path/HEADER.html" << EOF
+<html>
+  <head>      
+  <link rel="shortcut icon" href="/images/favicon.jpg" />
+      <link rel="stylesheet" type="text/css" href="/css/default.css" />
+    </head>
+    <body>
+EOF
+htmlnavbar >> "$path/HEADER.html"
+echo "<div id=\"header\"><h1>List of data sets</h1></div>" >> "$path/HEADER.html"
 
 # Iterate over data sets
 rm -f "$TMP_ST"
