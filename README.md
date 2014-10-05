@@ -1,4 +1,4 @@
-# A metadata-enriched distributed universal service archive
+# Medusa: A metadata-enriched distributed universal storage
 
 This is a rough implementation of a generic data store and associated
 services.  It was developed based on the need for a structured way to
@@ -22,23 +22,32 @@ contains the metadata describing the data set.
 This directory contains the bulk of the implementation, mostly in the
 form of shell scripts.
 
- * [mdz](medusa/mdz) - The main driver script that sets up the
+ * [mdz](mdz) - The main driver script that sets up the
    environment and calls other commands
  * [medusa.conf.example](medusa.conf.example) - Example config file,
-   copy to $HOME/.medusa.conf and edit as appropriate
- * [meta.rnc](medusa/meta.rnc) - RelaxNG schema for metadata XML files
- * [mimetypes.txt](medusa/mimetypes.txt) - a list of known file types. Note that this is not
+   copy to $HOME/.medusa.conf and edit as appropriate.
+
+Supporting files and basic infrastructure:
+
+ * [meta.rnc](meta.rnc) - RelaxNG schema for metadata XML files
+ * [mimetypes.txt](mimetypes.txt) - a list of known file types. Note that this is not
    exhaustive, and unknown file type is not an error.
- * [xmlcheck.sh](medusa/xmlcheck.sh) - checks the data sets given as command-line parameters
+ * [xmlcheck.sh](xmlcheck.sh) - checks the data sets given as command-line parameters
    for consistency and correctness
- * [checkall.sh](medusa/checkall.sh) - checks all data sets using xmlcheck.sh, and outputs a
+ * [checkall.sh](checkall.sh) - checks all data sets using xmlcheck.sh, and outputs a
    summary
  * [gen_meta.sh](medusa/gen_meta.sh) - builds a skeleton metadata file for the given
    dataset, trying to automatically determine file types
- * [scriptindex.sh](medusa/scriptindex.sh) - builds a generic search index using xapian and
+
+Services are contained in their own subdirectories in the
+[services](services) directory.  Each subdir contains a script of the
+same name (plus a ".sh" extension) and optionally configuratoin files.
+
+ * [xapian-index](services/xapian-index/) - builds a generic search index using xapian and
    omega
- * [index.def](medusa/index.def) - definitions for scriptindex
- * [viroblast.sh](medusa/viroblast.sh) - builds a Viroblast sequence search service
+ * [viroblast](servcies/viroblast/) - builds a Viroblast sequence search service
+ * [website](servcies/website) - builds a website with metadata
+    presented as web pages with links to data and index pages.
 
 ## Required software
 
@@ -48,11 +57,12 @@ from the metadata files.  This is availabe through most Linux
 distributions, or the link above.  Unfortunately, `xmlstarlet` cannot
 read RNC schemas directly, and we need
 [`trang`](https://code.google.com/p/jing-trang/) to convert to RNG.
+In addition, [`xsltproc`] is needed to process XSLT stylesheets.
 
 Some of the services require special software, e.g. the viroblast
 service requires
 [`viroblast`](http://indra.mullins.microbiol.washington.edu/viroblast/viroblast.php),
-and the metadata search service uses
+and the xapian-index search service uses
 [`xapian`](http://xapian.org/) and its
 [`omega`](http://xapian.org/docs/omega/overview.html) web interface.
 
@@ -66,9 +76,9 @@ files that constitute the dataset.  Then run `gen_meta.sh`.
 	medusa/gen_meta.sh DataSet
 	
 You should now have a `meta.xml` file in DataSet.  If you run
-`medusa/xmlcheck.sh`, you will likely get some warnings.  Now, edit the
+`mdz check DataSet`, you will likely get some warnings.  Now, edit the
 metadata file, and fill in details.  Then check it (again) with
-`xmlcheck`, and when it passes, you are done as far as the system is
+`mdz check`, and when it passes, you are done as far as the system is
 concerned.
 
 When `gen_meta.sh` is run, two metadata sections are generated with
@@ -89,6 +99,10 @@ contents is just free text, but the tag has a required attribute,
 something like:
 
     <species tsn="89113" sciname="Lepeophtheirus salmonis">Atlantic salmon louse</species>
+
+Currently, this will be indexed by xapain (so you can search for
+e.g. `species:salmon`), and the website service builds a table linking
+datasets to species.
 
 ### Dataset
 
