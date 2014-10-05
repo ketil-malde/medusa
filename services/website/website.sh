@@ -6,6 +6,8 @@ set -uf -o pipefail
 TMP_ST=/tmp/tmp_species_list
 path="$MDZ_WEBSITE_DIR/$MDZ_WEBSITE_DATA_PREFIX"
 
+# Output the HTML navbar - i.e. code to generate the black bar at the top of each page
+# Mostly called from `htmlhead` below
 htmlnavbar(){
     cat <<EOF
       <div id="navbar">
@@ -24,6 +26,7 @@ EOF
 EOF
 }
 
+# Output HTML header section - call this at start, and `htmlfoot` at end
 htmlhead(){
     echo "<html><head><title>$1</title>"
     cat <<EOF
@@ -36,20 +39,26 @@ EOF
     echo "<div id=\"header\"><h1>$1</h1></div>"
 }
 
+# Counterpart to `htmlhead`
 htmlfoot(){
     echo "</body></html>"
 }
 
+# Extract the description field and format it appropriately as HTML
 gen_desc(){
     xmlstarlet sel -t -m "//description" -c "." "$MDZ_DATADIR/$1/meta.xml" | xsltproc "$MDZ_DIR/services/website/format.xsl" -
 }
 
+# Extract the provenance field and format it appropriately as HTML
 gen_prov(){
-    echo "<h2>Provenance</h2>"
-    xmlstarlet sel -t -m "//provenance" -c "." "$MDZ_DATADIR/$1/meta.xml" | xsltproc "$MDZ_DIR/services/website/format.xsl" - 2>/dev/null
-    # discard warnings when dataset doesn't have provenance (sorry)
+    # only do this if we have a provenance field
+    if [ $(xmlstarlet sel -t -v "count(//provenance)" "$MDZ_DATADIR/$1/meta.xml") = "1" ]; then
+      echo "<h2>Provenance</h2>"
+      xmlstarlet sel -t -m "//provenance" -c "." "$MDZ_DATADIR/$1/meta.xml" | xsltproc "$MDZ_DIR/services/website/format.xsl" -
+    fi
 }
 
+# Extract the file contents and output the appropriate HTML section
 gen_files(){
     echo "<h2>Files</h2>"
     echo "<table><tr><th>Path</th><th>Description</th><th>Type</th><th>md5sum</th></tr><tr><th colspan=\"4\"><hr></th></tr>"
@@ -68,6 +77,7 @@ gen_files(){
     echo "</table>"
 }
 
+# Generate a web page for a dataset using the above functions
 gen_index(){
     NAME="$1"
     htmlhead "$1"
@@ -77,11 +87,13 @@ gen_index(){
     htmlfoot
 }
 
+# extract species info from a dataset
 extract_species(){
     FILE="$MDZ_DATADIR/$1/meta.xml"
     xmlstarlet sel -t -m "//species" -v "@tsn" -o "	"  -v "@sciname" -o "	" -v "." -o "	$1" -n "$FILE" 
 }
 
+# Build the main species index, listing all species referenced
 build_species_table(){
     htmlhead "Species index"
     echo "  <table><tr> <th>TSN</th> <th>sciname</th> <th>Descriptions</th><th>Datasets</th></tr><tr><th colspan=\"4\"><hr></th></tr>"
@@ -100,10 +112,12 @@ build_species_table(){
     htmlfoot
 }
 
+# Link from a TSN to WoRMS entry
 mk_worms_link(){
     echo "<a href=\"http://www.marinespecies.org/aphia.php?p=taxlist&tComp=is&searchpar=3&tName=$1\">WoRMS description</a>"
 }
 
+# For a each TSN in the species table, generate a specific index listing datasets etc
 build_species_lists(){
     for tsn in $(cut -f1 "$TMP_ST" | sort | uniq); do
 	PAT="^$tsn	"
@@ -134,7 +148,7 @@ build_species_lists(){
 }
 
 
-# Build front page
+# Build the front page
 htmlhead "Medusa Data Repository" > "$MDZ_WEBSITE_DIR/index.html" || error "Couldn't create front page - exiting"
 cat "$MDZ_DIR/services/website/index_template.html" >> "$MDZ_WEBSITE_DIR/index.html" 
 htmlfoot >> "$MDZ_WEBSITE_DIR/index.html" 
@@ -154,7 +168,7 @@ EOF
 htmlnavbar >> "$path/HEADER.html"
 echo "<div id=\"header\"><h1>List of data sets</h1></div>" >> "$path/HEADER.html"
 
-# Iterate over data sets
+# Iterate over all data sets, actually building the site
 rm -f "$TMP_ST"
 for name in $(ls "$MDZ_DATADIR"); do 
     if [ -f "$MDZ_DATADIR/$name/meta.xml" ]; then
