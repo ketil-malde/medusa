@@ -1,18 +1,8 @@
 #!/bin/bash
 
-error(){
-    echo "Error: $*"
-    exit -1
-}
-
 set -u -o pipefail
 shopt -s failglob
 . "$MDZ_DIR/functions.sh"
-
-R="$(tput setaf 1)"
-G="$(tput setaf 2)"
-Y="$(tput setaf 3)"
-N="$(tput sgr0)"
 
 LOG=/tmp/xmlcheck.log
 date > $LOG
