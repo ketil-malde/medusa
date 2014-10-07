@@ -5,6 +5,10 @@ error(){
     exit -1
 }
 
+set -u -o pipefail
+shopt -s failglob
+. "$MDZ_DIR/functions.sh"
+
 R="$(tput setaf 1)"
 G="$(tput setaf 2)"
 Y="$(tput setaf 3)"
@@ -13,18 +17,15 @@ N="$(tput sgr0)"
 LOG=/tmp/xmlcheck.log
 date > $LOG
 
-if [ -z "$1" ]; then
-   DIR=""
+if [ "$#" = "0" ]; then
+   DIR="$MDZ_DATADIR"
 elif [ -d "$1" ]; then
-   DIR="$1/"
+   DIR="$1"
 else
    error "checkall: $1 is not a directory"
 fi
 
-set -u -o pipefail
-shopt -s failglob
- 
-for a in $DIR*; do
+for a in $DIR/*; do
   if echo $a | egrep -q -v _darcs\|lost\\+found; then
      $MDZ_DIR/xmlcheck.sh $a
      RET=$?
