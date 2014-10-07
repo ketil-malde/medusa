@@ -80,7 +80,7 @@ if [ -f "$M" ]; then
    # Check that metadata is unchanged if version is unchanged
    META_MD5=$(md5sum "$M" | cut -f1 -d' ')
    VER=$(xmlstarlet sel -t -m "//meta" -v "@version" "$M")
-   OLD=$(grep "$ID	$VER	" "$MDZ_DIR/meta_checksums") || echo -n
+   OLD=$(grep "$ID	$VER	" "$MDZ_DIR/meta_checksums") || true
    if grep -q "$ID	" "$MDZ_DIR/meta_checksums"; then
       if [ -z "$OLD" ]; then
 	note "Registering new version: $ID $VER"
@@ -130,7 +130,7 @@ if [ -f "$M" ]; then
   done
 
   echo "Checking links: "
-  LINKS=$(xmlstarlet sel -t -m "//dataset" -v "@id" -n "$M") || echo -n # failure is okay
+  LINKS=$(xmlstarlet sel -t -m "//dataset" -v "@id" -n "$M") || true
   for a in $LINKS; do
     [ -d "$a" ] || warn "Dataset $a referenced, but not found"
   done
