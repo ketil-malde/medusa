@@ -4,6 +4,7 @@ text/x-fasta-dna
 text/x-fasta-prot
 text/x-fasta-qual
 text/x-fastq
+text/x-fasta-index
 text/csv
 application/pdf
 text/x-gff3
