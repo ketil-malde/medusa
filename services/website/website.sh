@@ -1,6 +1,5 @@
 #!/bin/bash
 set -uf -o pipefail
-
 . "$MDZ_DIR/functions.sh"
 
 TMP_ST=/tmp/tmp_species_list
@@ -81,7 +80,21 @@ gen_files(){
 # Generate a web page for a dataset using the above functions
 gen_index(){
     NAME="$1"
-    htmlhead "$1"
+    STATUS=$(xmlstarlet sel -t -m "/meta" -v "@status" "$MDZ_DATADIR/$1/meta.xml")
+    case "$STATUS" in
+      invalid)
+        htmlhead "$NAME <em class=\"error\">$STATUS</em>"
+        ;;
+      superseded)
+        htmlhead "$NAME <em class=\"warn\">$STATUS</em>"
+        ;;
+      "")
+        htmlhead "$NAME"
+        ;;
+      *)
+        htmlhead "$NAME <em>$STATUS</em>"
+        ;;
+    esac
     gen_desc "$NAME"
     gen_prov "$NAME"
     gen_files "$NAME"

@@ -7,7 +7,7 @@ start = element meta
     , contents
 }
 
-status = "superseded" | "deprecated"
+status = "superseded" | "invalid"
 
 version = xsd:string { pattern = "[1-9][0-9]*" } # serial number
 

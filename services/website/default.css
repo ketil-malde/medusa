@@ -77,8 +77,12 @@ div#header h1 {
    padding: 0.2em 3em;
 }
 
-div#header h1 {
-   margin: 0;
+.error {
+   color: #C00;
+}
+
+.warn {
+  color: #AA0;
 }
 
 div#footer { border-top: solid 4px #666; }
