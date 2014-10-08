@@ -1,10 +1,13 @@
+body {
+   margin: 0;
+}
+
 div#main {
-    margin-left: 15%;
-    margin-right: 20%;
+    margin-left: 5%;
+    margin-right: 5%;
 }
 
 p {
-
 }
 
 h2, h3 { font-style: italic; }
@@ -12,15 +15,6 @@ h2, h3 { font-style: italic; }
 .noindent { text-indent: 0; }
 
 li p { text-indent: 0; }
-
-#blogname { 
-    text-indent: 0;
-    font-size: 3em;
-    font-family: helvetica;
-    font-style: italic;
-    padding: 1em;
-    margin: 1em;
-}
 
 p.float {
     text-indent: 0;
@@ -97,13 +91,14 @@ div#footer { border-top: solid 4px #666; }
 
 div#navbar {
     text-align: right;
-    font-family: helvetica;
     background-color: black;
     border: solid 2px black;
     color: white;
 }
 
 div#navbar a {
+    font-family: helvetica;
+    font-size: 14px;
     color: white;
     text-decoration: none;
     background-color: black;

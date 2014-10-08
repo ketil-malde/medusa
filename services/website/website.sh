@@ -37,11 +37,12 @@ htmlhead(){
 EOF
     htmlnavbar
     echo "<div id=\"header\"><h1>$1</h1></div>"
+    echo "<div id=\"main\">"
 }
 
 # Counterpart to `htmlhead`
 htmlfoot(){
-    echo "</body></html>"
+    echo "</div></body></html>"
 }
 
 # Extract the description field and format it appropriately as HTML
