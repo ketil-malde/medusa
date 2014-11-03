@@ -15,6 +15,7 @@ mimetype(){
 		echo -n "text/x-gff3" ;;
 	sff)	echo -n "application/x-sff" ;;
 	bam)	echo -n "application/x-bam" ;;
+	bai)	echo -n "application/x-bamindex" ;;
 	fasta|fa)
 	        echo -n "text/x-fasta" ;;
 	fna)	echo -n "text/x-fasta-dna-or-rna" ;;
