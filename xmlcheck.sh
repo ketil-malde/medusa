@@ -132,7 +132,7 @@ if [ -f "$M" ]; then
   echo "Checking links: "
   LINKS=$(xmlstarlet sel -t -m "//dataset" -v "@id" -n "$M") || true
   for a in $LINKS; do
-    [ -d "$a" ] || warn "Dataset $a referenced, but not found"
+    [ -d "$MDZ_DATADIR/$a" ] || warn "Dataset $a referenced, but not found"
   done
   echo
 fi
