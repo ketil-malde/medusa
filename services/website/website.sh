@@ -70,8 +70,9 @@ gen_files(){
         echo "  <tr> <td><a href=\"/$MDZ_WEBSITE_DATA_PREFIX/$1/$f\">$f</a></td> <td>$DESC</td> <td>$TYPE</td> <td>$MD5</td> </tr>"
 	echo "</tr>"
 
-        mkdir -p "$DEST" || error "Failed to create directory - exiting"
-        ln -fs "$MDZ_DATADIR/$1/$f" "$DEST" || error "Failed to create link - exiting"
+	SUB=$(dirname "$f")
+        mkdir -p "$DEST/$SUB" || error "Failed to create directory - exiting"
+        ln -fs "$MDZ_DATADIR/$1/$f" "$DEST/$SUB" || error "Failed to create link - exiting"
     done
     ln -fs "$MDZ_DATADIR/$1/meta.xml" "$DEST"
     echo "</table>"
