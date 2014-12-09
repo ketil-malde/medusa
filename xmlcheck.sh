@@ -43,7 +43,7 @@ fi
 
 D=$1
 
-echo "Checking dataset $D"
+note "Checking dataset $D"
 
 M=$D/meta.xml
 
