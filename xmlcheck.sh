@@ -65,8 +65,9 @@ grep -q '^  *\.\.\.$' "$M" && warn "meta.xml seems incomplete - please fill in d
 echo "Checking permissions: "
 if find "$D" -perm /ugo=w -follow | grep . ; then 
    warn "Writable files found"
-else
-   echo "Permissions OK"
+fi
+if find "$D" ! -perm -ugo=r -follow | grep . ; then
+   warn "Unreadable files found"
 fi
 
 if [ -f "$M" ]; then
