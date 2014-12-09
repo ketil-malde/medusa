@@ -16,7 +16,7 @@ EOF
     cat <<EOF
         <a href="/TSN">index</a>
         <a href="mailto:ketil.malde@imr.no">feedback</a>
-        <a href="/cgi-bin/omega/omega">search</a>
+        <a href="/cgi-bin/omega/omega?DB=medusa">search</a>
 	<form style="display: inline;" method="POST" action="/cgi-bin/omega/omega">
 	  <input style="display: inline; margin: 2px 20px;" type="text" name="P" value="" />
 	  <input type="hidden" name="DB" value="medusa" />
