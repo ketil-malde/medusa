@@ -79,6 +79,13 @@ gen_files(){
     echo "</table>"
 }
 
+gen_cite(){
+    xmlstarlet sel -t -m "//cite" -v @doi -n "$MDZ_DATADIR/$1/meta.xml" | while read doi; do
+	cite=$(curl -LH "Accept: text/bibliography; style=mla" http://dx.doi.org/$doi)
+	echo "<li><a href=\"http://dx.doi.org/$doi\">$(echo $cite | cut -c-20)</a> $(echo $cite | cut -c21-)</li>" 
+    done
+}
+
 # Generate a web page for a dataset using the above functions
 gen_index(){
     NAME="$1"
@@ -100,6 +107,12 @@ gen_index(){
     gen_desc "$NAME"
     gen_prov "$NAME"
     gen_files "$NAME"
+    REFS=$(gen_cite "$NAME")
+    if test ! -z "$REFS"; then
+       echo "<h2>References</h2><ul>"
+       echo "$REFS"
+       echo "</h2>"
+    fi
     htmlfoot
 }
 
