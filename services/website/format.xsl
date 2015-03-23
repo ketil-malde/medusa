@@ -17,4 +17,15 @@
   </a>
 </xsl:template>
 
+<xsl:template match="cite">
+  <a>
+    <xsl:attribute name="href">http://dx.doi.org/<xsl:value-of select="@doi"/></xsl:attribute>
+    <xsl:if test="not(string(.))">
+       [Citation]
+    </xsl:if>
+    <xsl:apply-templates/>
+
+  </a>
+</xsl:template>
+
 </xsl:stylesheet>
