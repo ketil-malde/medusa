@@ -31,6 +31,7 @@ htmlhead(){
     cat <<EOF
       <link rel="shortcut icon" href="/images/favicon.jpg" />
       <link rel="stylesheet" type="text/css" href="/css/default.css" />
+      <meta charset="UTF-8">
     </head>
     <body>
 EOF
