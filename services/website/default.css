@@ -153,3 +153,12 @@ div.figure p {
    font-style: italic;
    width: 340px;
 }
+
+a.dataset {
+   color: #080;
+}
+
+a.species {
+   color: #550;
+}
+
