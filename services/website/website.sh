@@ -80,9 +80,11 @@ gen_files(){
 }
 
 gen_cite(){
-    xmlstarlet sel -t -m "//cite" -v @doi -n "$MDZ_DATADIR/$1/meta.xml" | while read doi; do
-	cite=$(curl -LH "Accept: text/bibliography; style=mla" http://dx.doi.org/$doi)
-	echo "<li><a href=\"http://dx.doi.org/$doi\">$(echo $cite | cut -c-20)</a> $(echo $cite | cut -c21-)</li>" 
+    xmlstarlet sel -t -m "//cite" -v @doi -o "	" -v "." -n "$MDZ_DATADIR/$1/meta.xml" | while read doi link; do
+	cite=$(curl -sLH "Accept: text/bibliography; style=mla" http://dx.doi.org/$doi)
+	echo -n "<li><a href=\"http://dx.doi.org/$doi\">"
+        if test -z "$link"; then echo -n "[Citation]"; else echo -n "$link"; fi
+	echo "</a>: $cite</li>"
     done
 }
 
