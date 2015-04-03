@@ -1,9 +1,10 @@
 
 # Medusa config file
 # Typically stored as /etc/medusa.conf or per user in $HOME/.medusa.conf
-# These variables can also be set directly in the shell
+# These variables can also be set directly in the shell (which will
+# override these settings)
 
-# Whether to skip md5sum and other very time-consuming checks
+# Whether to skip md5sum and other very time-consuming checks:
 MDZ_QUICK_MODE=1
 
 # Where the medusa installation resides
@@ -26,7 +27,7 @@ MDZ_WEBSITE_DIR=/var/www
 MDZ_WEBSITE_DATA_PREFIX=data
 
 # Service: xapian search engine
-# Where to store the database
+# Where to store the database:
 MDZ_XAPIAN_DIR=/var/lib/xapian-omega/data
 MDZ_XAPIAN_DB=medusa
 
