@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# check specific formats
+# check specific formats, take file path as parameter
 check_format_fasta(){
     set +e
     egrep -n -m 3 -v '^>|^[A-Za-z]*$' "$1" && warn "Suspicious characters in FASTA sequence data!"
@@ -8,6 +8,7 @@ check_format_fasta(){
     set -e
 }
 
+# check_format <path> <type>
 check_format(){
     file="$1"
     type="$2"
@@ -15,7 +16,7 @@ check_format(){
     case "$type" in
 	text/x-fasta-prot|text/x-fasta-rna|text/x-fasta-dna)
 	    echo "$file har format $type, checking it..."
-	    check_format_fasta "$(datafile "$sha1")"
+	    check_format_fasta "$file"
 	    ;;
     esac
 }

@@ -33,18 +33,18 @@ grep -q '^  *\.\.\.$' "$M" && warn "meta.xml seems incomplete - please fill in d
 # check file formats
 cp "$M" tmp.xml
 while read f t; do
-    echo -n "Processing file $f..."
-    echo -n "calculating hash..."
+    echo "Processing file $f"
+    echo "  ...calculating hash"
     sha1="$(checksum "$D/$f")"
     xmlstarlet ed -i "//file[@path='$f']" -t attr -n "sha1" -v "$sha1" tmp.xml > tmp2.xml
     mv tmp2.xml tmp.xml
     if [ -f "$(datafile "$sha1")" ]; then
 	warn "$sha1 already exists - possible SHA1 collision?"
     fi
-    echo -n "checking format..."
-    check_format "$f" "$t"
-    echo "done."
-done < <(xmlstarlet sel -t -m "//file" -v "@path" -o "	" -v "mimetype" -n "$M")
+    echo "  ...checking format"
+    grep -q "^$t\$" "$MDZ_DIR/mimetypes.txt" || warn "$f has unknown mimetype \"$t\""
+    check_format "$D/$f" "$t"
+done < <(xmlstarlet sel -t -m "//file" -v "@path" -o "	" -v "@mimetype" -n "$M")
 
 # check references
 while read a; do
