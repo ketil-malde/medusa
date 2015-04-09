@@ -29,18 +29,10 @@ is_dataset(){
     is_valid_id "$1" && test "$(head -c 5 "$f")" = "<?xml" && test "$(tail -n +2 "$f" | head -c 5)" = "<meta"
 }
 
+assert_is_dataset(){ is_dataset "$1" || error "'$1' is not a valid dataset."; }
+
 # get path to object
 datafile(){ echo "$MDZ_DATADIR/$1"; }
-
-# Check status of dataset - use this in scripts etc to avoid using incorrect data sets.
-validate(){
-    D="$1"
-    is_dataset "$D" || error "'$D' is not a valid dataset."
-    S=$(xmlstarlet sel -t -m /meta -v @status -n "$D")
-    echo "$S"
-    [ "$S" = "deprecated" ] && error "Dataset '$D' is deprecated!"
-    [ "$S" = "superseded" ] && warn "Dataset '$D' is superseded!"
-}
 
 datasets(){
     find "$MDZ_DATADIR" -type f | while read f; do if is_dataset "$(basename "$f")"; then basename "$f"; fi; done
@@ -49,7 +41,7 @@ datasets(){
 # list all files in a dataset
 files(){
     D="$1"
-    is_dataset "$D" || error "'$D' is not a valid dataset."
+    assert_is_dataset "$D"
     xmlstarlet sel -t -m //file -v @path -n "$(datafile "$D")" | grep .
 }
 
@@ -57,6 +49,6 @@ files(){
 files_by_type(){
     D="$1"
     T="$2"
-    is_dataset "$D" || error "'$D' is not a valid dataset."
+    assert_is_dataset "$D"
     xmlstarlet sel -t -m "//file[@mimetype='$T']" -v @path -n "$(datafile "$D")" | grep .
 }
