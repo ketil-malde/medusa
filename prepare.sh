@@ -5,8 +5,7 @@ set -euf -o pipefail
 . "$MDZ_DIR/functions.sh"
 
 mimetype(){
-	SUF=`echo "$1" | sed -e 's/^.*\.\([^.]*\)$/\1/g'`
-	# echo \"$1\" : suffix = $SUF
+	SUF="${1/#*./}"  # "$(echo "$1" | sed -e 's/^.*\.\([^.]*\)$/\1/g')"
 	case $SUF in
 	fastq)	echo -n "text/x-fastq" ;;
 	pdf)    echo -n "application/pdf" ;;
@@ -33,12 +32,12 @@ fi
 
 DIR=$1
 
-test -d $DIR || error "Data set $DIR not found"
-test ! -e $DIR/meta.xml || error "$DIR/meta.xml already exists"
+test -d "$DIR" || error "Data set $DIR not found"
+test ! -e "$DIR/meta.xml" || error "$DIR/meta.xml already exists"
 
-cd $DIR
-NAME=`basename "$DIR"`
-echo '<meta name="'$NAME'">' > meta.xml
+cd "$DIR"
+NAME="$(basename "$DIR")"
+echo '<meta name="'"$NAME"'">' > meta.xml
 cat >> meta.xml << EOF
 <description>
   ...
@@ -50,10 +49,8 @@ cat >> meta.xml << EOF
 EOF
 
 find . -type f | grep -v meta.xml | while read a; do
-  #  sha1=`checksum "$a"` - add checksums on import
-  fpath=`echo "$a" | cut -d/ -f2-`
-  echo >> meta.xml '  <file path="'$fpath'"'
-  # echo >> meta.xml '        sha1="'$sha1'"'
+  fpath="$(echo "$a" | cut -d/ -f2-)"
+  echo >> meta.xml '  <file path="'"$fpath"'"'
   echo -n >> meta.xml '        mimetype="'
   mimetype "$fpath" >> meta.xml
   echo >> meta.xml '">'

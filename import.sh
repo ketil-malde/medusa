@@ -31,7 +31,7 @@ test $MDZ_DIR/meta.rnc -nt $MDZ_DIR/meta.rng && (trang $MDZ_DIR/meta.rnc $MDZ_DI
 grep -q '^  *\.\.\.$' "$M" && warn "meta.xml seems incomplete - please fill in details"
 
 # check file formats
-cp $M tmp.xml
+cp "$M" tmp.xml
 while read f t; do
     echo -n "Processing file $f..."
     echo -n "calculating hash..."

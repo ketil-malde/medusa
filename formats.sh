@@ -14,7 +14,7 @@ check_format(){
 
     case "$type" in
 	text/x-fasta-prot|text/x-fasta-rna|text/x-fasta-dna)
-	    echo "Checking formats: $f"
+	    echo "$file har format $type, checking it..."
 	    check_format_fasta "$(datafile "$sha1")"
 	    ;;
     esac

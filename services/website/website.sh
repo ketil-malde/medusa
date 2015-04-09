@@ -54,7 +54,7 @@ gen_desc(){
 # Extract the provenance field and format it appropriately as HTML
 gen_prov(){
     # only do this if we have a provenance field
-    if [ $(xmlstarlet sel -t -v "count(//provenance)" "$(datafile "$1")") = "1" ]; then
+    if [ "$(xmlstarlet sel -t -v "count(//provenance)" "$(datafile "$1")")" = "1" ]; then
       echo "<h2>Provenance</h2>"
       xmlstarlet sel -t -m "//provenance" -c "." "$(datafile "$1")" | xsltproc "$MDZ_DIR/services/website/format.xsl" -
     fi
@@ -82,7 +82,7 @@ gen_files(){
 
 gen_cite(){
     xmlstarlet sel -t -m "//cite" -v @doi -o "	" -v "." -n "$(datafile "$1")" | while read doi link; do
-	cite=$(curl -sLH "Accept: text/bibliography; style=mla" http://dx.doi.org/$doi)
+	cite="$(curl -sLH "Accept: text/bibliography; style=mla" "http://dx.doi.org/$doi")"
 	echo -n "<li><a href=\"http://dx.doi.org/$doi\">"
         if test -z "$link"; then echo -n "[Citation]"; else echo -n "$link"; fi
 	echo "</a>: $cite</li>"
@@ -135,8 +135,8 @@ build_species_table(){
     for tsn in $(cut -f1 "$TMP_ST" | sort | uniq); do
 	PAT="^$tsn	"
 	echo -n "  <tr><td><a href=\"/TSN/${tsn}.html\">$tsn</a></td>"
-        echo -n "      <td>$(grep $PAT $TMP_ST | cut -f2 | grep . | sort | uniq | tr '\n' \;)</td>"
-        echo -n "      <td>$(grep $PAT $TMP_ST | cut -f3 | grep . | sort | uniq | tr '\n' \;)</td>"
+        echo -n "      <td>$(grep "$PAT" "$TMP_ST" | cut -f2 | grep . | sort | uniq | tr '\n' \;)</td>"
+        echo -n "      <td>$(grep "$PAT" "$TMP_ST" | cut -f3 | grep . | sort | uniq | tr '\n' \;)</td>"
         echo -n "      <td>"
         grep "$PAT" "$TMP_ST" | cut -f4 | grep . | while read ds; do
 	    echo -n "<a href=\"/$MDZ_WEBSITE_DATA_PREFIX/$ds\">$ds</a> "
