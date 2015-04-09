@@ -6,7 +6,7 @@ shopt -s failglob
 DIR=$MDZ_DATADIR
 TARGET_DIR=$MDZ_VIROBLAST_DIR
 
-[ -d "$TARGET_DIR" ] || error "Viroblast target dir '$TARGET_DIR' does not exist"
+[ -d "$TARGET_DIR" ] || mkdir -p "$TARGET_DIR" || error "Viroblast target dir '$TARGET_DIR' does not exist"
 
 mkdir -p $TARGET_DIR/db/nucleotide 
 mkdir -p $TARGET_DIR/db/protein 
@@ -52,9 +52,9 @@ filter(){
   grep -v '^[ 	]*$' |  sed 'N;s/	\n[ 	]*/	/g'
 }
 
-for a in "$DIR"/*/meta.xml; do
-  name=`dirname $a`
-  dataset=`basename $name`
+for x in "$(datasets)"; do
+  a="$(datafile "$x")"
+  dataset="$(xmlstarlet sel -t -m /meta -v "@name" -n "$a")"
 
   xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-dna']" -v @path -o "	" -v "." -n $a | filter | while read rec; do
     add_nuc "$rec" "$dataset" "DNA"
