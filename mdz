@@ -29,12 +29,12 @@ usage(){
 }
 
 serve(){
-    [ -x "$MDZ_DIR/services/$1/$1.sh" ] || error "No such service: $1"
+    [ -f "$MDZ_DIR/services/$1/$1.sh" ] || error "No such service: $1"
     "$MDZ_DIR/services/$1/$1.sh" "${@:2}"
 }
 
 run(){
-    [ -x "$MDZ_DIR/run/$1.sh" ] || error "No such command: $1"
+    [ -f "$MDZ_DIR/run/$1.sh" ] || error "No such command: $1"
     "$MDZ_DIR/run/$1.sh" "${@:2}"
 }
 
@@ -59,22 +59,19 @@ PARAMS="${@:2}"
 
 case $CMD in
   check)
-	$MDZ_DIR/xmlcheck.sh $PARAMS
+	$MDZ_DIR/check.sh $PARAMS
   ;;
   checkall)
 	$MDZ_DIR/checkall.sh $PARAMS
   ;;
-  get)
-	$MDZ_DIR/get.sh $PARAMS
+  import)
+	$MDZ_DIR/import.sh $PARAMS
   ;;
-  put)
-	$MDZ_DIR/put.sh $PARAMS
+  export)
+	$MDZ_DIR/export.sh $PARAMS
   ;;
-  list)
-	$MDZ_DIR/list.sh $PARAMS
-  ;;
-  genmeta)
-	$MDZ_DIR/gen_meta.sh $PARAMS
+  prepare)
+	$MDZ_DIR/prepare.sh $PARAMS
   ;;
   service)
 	serve $PARAMS
@@ -90,10 +87,9 @@ Available commands:
 
   check    - check a dataset for correctness
   checkall - check all datasets
-  get      - get a dataset from remote repository
-  put      - put a dataset in remote repository
-  list     - list contenst of remote repository
-  genmeta  - generate metadata for a dataset
+  import   - import a dataset into repository
+  export   - extract a dataset from repository
+  prepare  - generate metadata for a dataset for import
 
   service <serv> - service specific commmands
   run <cmd>      - run pipeline to generate new datasets

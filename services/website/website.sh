@@ -1,5 +1,5 @@
 #!/bin/bash
-set -uf -o pipefail
+set -euf -o pipefail
 . "$MDZ_DIR/functions.sh"
 
 TMP_ST=/tmp/tmp_species_list
@@ -47,40 +47,41 @@ htmlfoot(){
 
 # Extract the description field and format it appropriately as HTML
 gen_desc(){
-    xmlstarlet sel -t -m "//description" -c "." "$MDZ_DATADIR/$1/meta.xml" | xsltproc "$MDZ_DIR/services/website/format.xsl" -
+    echo "<h2>Description</h2>"
+    xmlstarlet sel -t -m "//description" -c "." "$(datafile "$1")" | xsltproc "$MDZ_DIR/services/website/format.xsl" -
 }
 
 # Extract the provenance field and format it appropriately as HTML
 gen_prov(){
     # only do this if we have a provenance field
-    if [ $(xmlstarlet sel -t -v "count(//provenance)" "$MDZ_DATADIR/$1/meta.xml") = "1" ]; then
+    if [ $(xmlstarlet sel -t -v "count(//provenance)" "$(datafile "$1")") = "1" ]; then
       echo "<h2>Provenance</h2>"
-      xmlstarlet sel -t -m "//provenance" -c "." "$MDZ_DATADIR/$1/meta.xml" | xsltproc "$MDZ_DIR/services/website/format.xsl" -
+      xmlstarlet sel -t -m "//provenance" -c "." "$(datafile "$1")" | xsltproc "$MDZ_DIR/services/website/format.xsl" -
     fi
 }
 
 # Extract the file contents and output the appropriate HTML section
 gen_files(){
     echo "<h2>Files</h2>"
-    echo "<table><tr><th>Path</th><th>Description</th><th>Type</th><th>md5sum</th></tr><tr><th colspan=\"4\"><hr></th></tr>"
+    echo "<table><tr><th>Path</th><th>Description</th><th>Type</th><th>checksum</th></tr><tr><th colspan=\"4\"><hr></th></tr>"
     DEST="$MDZ_WEBSITE_DIR/$MDZ_WEBSITE_DATA_PREFIX/$1"
-    files "$MDZ_DATADIR/$1" | while read f; do
-	TYPE=$(xmlstarlet sel -t -m "//file[@path='$f']" -v @mimetype -n "$MDZ_DATADIR/$1/meta.xml")
-	DESC=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "." -n "$MDZ_DATADIR/$1/meta.xml")
-	MD5=$(xmlstarlet  sel -t -m "//file[@path='$f']" -v @md5 -n "$MDZ_DATADIR/$1/meta.xml")
-        echo "  <tr> <td><a href=\"/$MDZ_WEBSITE_DATA_PREFIX/$1/$f\">$f</a></td> <td>$DESC</td> <td>$TYPE</td> <td>$MD5</td> </tr>"
+    files "$1" | while read f; do
+	TYPE=$(xmlstarlet sel -t -m "//file[@path='$f']" -v @mimetype -n "$(datafile "$1")")
+	DESC=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "." -n "$(datafile "$1")")
+	CS=$(xmlstarlet  sel -t -m "//file[@path='$f']" -v @sha1 -n "$(datafile "$1")")
+        echo "  <tr> <td><a href=\"/$MDZ_WEBSITE_DATA_PREFIX/$1/$f\">$f</a></td> <td>$DESC</td> <td>$TYPE</td> <td>$CS</td> </tr>"
 	echo "</tr>"
 
 	SUB=$(dirname "$f")
         mkdir -p "$DEST/$SUB" || error "Failed to create directory - exiting"
         ln -fs "$MDZ_DATADIR/$1/$f" "$DEST/$SUB" || error "Failed to create link - exiting"
     done
-    ln -fs "$MDZ_DATADIR/$1/meta.xml" "$DEST"
+    ln -fs "$(datafile "$1")" "$DEST"
     echo "</table>"
 }
 
 gen_cite(){
-    xmlstarlet sel -t -m "//cite" -v @doi -o "	" -v "." -n "$MDZ_DATADIR/$1/meta.xml" | while read doi link; do
+    xmlstarlet sel -t -m "//cite" -v @doi -o "	" -v "." -n "$(datafile "$1")" | while read doi link; do
 	cite=$(curl -sLH "Accept: text/bibliography; style=mla" http://dx.doi.org/$doi)
 	echo -n "<li><a href=\"http://dx.doi.org/$doi\">"
         if test -z "$link"; then echo -n "[Citation]"; else echo -n "$link"; fi
@@ -91,25 +92,28 @@ gen_cite(){
 # Generate a web page for a dataset using the above functions
 gen_index(){
     NAME="$1"
-    STATUS=$(xmlstarlet sel -t -m "/meta" -v "@status" "$MDZ_DATADIR/$1/meta.xml")
-    case "$STATUS" in
-      invalid)
-        htmlhead "$NAME <em class=\"error\">$STATUS</em>"
-        ;;
-      superseded)
-        htmlhead "$NAME <em class=\"warn\">$STATUS</em>"
-        ;;
-      "")
-        htmlhead "$NAME"
-        ;;
-      *)
-        htmlhead "$NAME <em>$STATUS</em>"
-        ;;
-    esac
+    htmlhead "$(xmlstarlet sel -t -m "/meta" -v "@name" "$(datafile "$1")" || true)"
+    echo "<p>ID=$1</p>"
+    # status is no longer a valid attribute of metadata files...
+    # STATUS=$(xmlstarlet sel -t -m "/meta" -v "@status" "$(datafile "$1")" || true)
+    # case "$STATUS" in
+    #   invalid)
+    #     htmlhead "$NAME <em class=\"error\">$STATUS</em>"
+    #     ;;
+    #   superseded)
+    #     htmlhead "$NAME <em class=\"warn\">$STATUS</em>"
+    #     ;;
+    #   "")
+    #     htmlhead "$NAME"
+    #     ;;
+    #   *)
+    #     htmlhead "$NAME <em>$STATUS</em>"
+    #     ;;
+    # esac
     gen_desc "$NAME"
     gen_prov "$NAME"
     gen_files "$NAME"
-    REFS=$(gen_cite "$NAME")
+    REFS=$(gen_cite "$NAME" || true)
     if test ! -z "$REFS"; then
        echo "<h2>References</h2><ul>"
        echo "$REFS"
@@ -120,8 +124,8 @@ gen_index(){
 
 # extract species info from a dataset
 extract_species(){
-    FILE="$MDZ_DATADIR/$1/meta.xml"
-    xmlstarlet sel -t -m "//species" -v "@tsn" -o "	"  -v "@sciname" -o "	" -v "." -o "	$1" -n "$FILE" 
+    FILE="$(datafile "$1")"
+    xmlstarlet sel -t -m "//species" -v "@tsn" -o "	"  -v "@sciname" -o "	" -v "." -o "	$1" -n "$FILE" || true
 }
 
 # Build the main species index, listing all species referenced
@@ -180,6 +184,7 @@ build_species_lists(){
 
 
 # Build the front page
+[ -d "$MDZ_WEBSITE_DIR" ] || mkdir -p "$MDZ_WEBSITE_DIR" || error "Website dir doesn't exist, and I couldn't create it."
 htmlhead "Medusa Data Repository" > "$MDZ_WEBSITE_DIR/index.html" || error "Couldn't create front page - exiting"
 cat "$MDZ_DIR/services/website/index_template.html" >> "$MDZ_WEBSITE_DIR/index.html" 
 htmlfoot >> "$MDZ_WEBSITE_DIR/index.html" 
@@ -201,15 +206,11 @@ echo "<div id=\"header\"><h1>List of data sets</h1></div>" >> "$path/HEADER.html
 
 # Iterate over all data sets, actually building the site
 rm -f "$TMP_ST"
-for name in $(ls "$MDZ_DATADIR"); do 
-    if [ -f "$MDZ_DATADIR/$name/meta.xml" ]; then
-	echo "Processing ${name}..."
-	mkdir -p "$path/$name"
-        gen_index "$name" > "$path/$name/index.html"
-	extract_species "$name" >> "$TMP_ST"
-    else 
-       warn "$name does not appear to be a valid dataset - skipping"
-    fi
+for name in $(datasets); do 
+    echo "Processing ${name}..."
+    mkdir -p "$path/$name"
+    gen_index "$name" > "$path/$name/index.html"
+    extract_species "$name" >> "$TMP_ST"
 done
 
 build_species_table > "$MDZ_WEBSITE_DIR/TSN/index.html"

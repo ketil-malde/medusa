@@ -79,22 +79,22 @@ if [ -f "$M" ]; then
 
   if [ "$(dirname $(readlink -e $D))" = "$MDZ_DATADIR" ]; then # only register if we are in the data dir
    # Check that metadata is unchanged if version is unchanged
-   META_MD5=$(md5sum "$M" | cut -f1 -d' ')
+   META_CS=$(checksum "$M")
    VER=$(xmlstarlet sel -t -m "//meta" -v "@version" "$M")
    OLD=$(grep "$ID	$VER	" "$MDZ_DIR/meta_checksums") || true
    if grep -q "$ID	" "$MDZ_DIR/meta_checksums"; then
       if [ -z "$OLD" ]; then
 	note "Registering new version: $ID $VER"
-	echo "$ID	$VER	$META_MD5" >> $MDZ_DIR/meta_checksums
+	echo "$ID	$VER	$META_CS" >> $MDZ_DIR/meta_checksums
       else
 	S_OLD=$(echo "$OLD" | cut -f3)
-	if [ "$META_MD5" != "$S_OLD" ]; then
-	   error "$ID version $VER exists, but has different checksum! $META_MD5 vs $S_OLD"
+	if [ "$META_CS" != "$S_OLD" ]; then
+	   error "$ID version $VER exists, but has different checksum! $META_CS vs $S_OLD"
         fi
       fi
    else # new dataset
         note "Registering new dataset: $ID $VER"
-        echo "$ID	$VER	$META_MD5" >> $MDZ_DIR/meta_checksums
+        echo "$ID	$VER	$META_CS" >> $MDZ_DIR/meta_checksums
    fi
   fi
  
@@ -102,10 +102,10 @@ if [ -f "$M" ]; then
   echo "Checking files:"
   while read f; do
     if [ -f "$D/$f" ]; then
-      md5=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "@md5" -n "$M")
+      sha1=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "@sha1" -n "$M")
       if [ "${MDZ_QUICK_MODE}" = "0" ]; then
-         echo -n "md5 checksum: "
-         cd "$D" ; echo "$md5  $f" | md5sum -c 2> /dev/null || error "Checksum mismatch for $f"; cd - > /dev/null
+         echo -n "sha1 checksum: "
+         [ "$sha1" -eq $(checksum "$D/$f") ] || error "Checksum mismatch for $f"
       # else
          # echo "quick mode: skipping checksumming for $f"
       fi

@@ -4,7 +4,7 @@
 # These variables can also be set directly in the shell (which will
 # override these settings)
 
-# Whether to skip md5sum and other very time-consuming checks:
+# Whether to skip checksums and other very time-consuming operations:
 MDZ_QUICK_MODE=1
 
 # Where the medusa installation resides

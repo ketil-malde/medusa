@@ -1,30 +1,32 @@
 start = element meta 
-    { attribute id { text }       # id corresponds to directory name
-    , attribute version { version }  # metadata version, bump on update
-    , attribute status { status }?
+    { attribute name { text }        # should be descriptive short form
+    , attribute obsoletes { hash }?    # if this is an update to an existing dataset
     , description?
     , provenance?
     , contents
 }
 
-status = "superseded" | "invalid"
+# A SHA1 hash, the basis for object identity
+hash = xsd:string { pattern = "[a-f0-9]*" length = "40" }
 
-version = xsd:string { pattern = "[1-9][0-9]*" } # serial number
-
+# Short description of the dataset
 description = element description { freetext }
 
+# Materials and methods, how this dataset came into existence
 provenance = element provenance { freetext }
 
+# List of the files this data set consists of
 contents =  element contents { element file 
-     { attribute path { text }       # file name, path relative to current dir
-     , attribute md5 {               # md5 checksum
-         xsd:string { pattern = "[a-f0-9]*" length = "32" }
+     { attribute path { text }         # file name, path relative to current dir
+     , attribute sha1 {                # sha1 checksum
+         hash
          }
      , attribute mimetype { mime_t }   # mime-type of the file (e.g. text/plain)
      ,  freetext
      }*
    }
 
+# Basic content, allows references to identified entities
 freetext = ( text 
            | element species  
 	       { attribute tsn { xsd:string { pattern = "[1-9][0-9]*" }}
@@ -33,9 +35,9 @@ freetext = ( text
 	     }
            | element person { text }
            | element location { text }
-	   | element dataset { attribute id { text }, attribute rel { rel }?, text }
+	   | element dataset { attribute id { hash }, attribute rel { rel }?, text }
 	   | element cite { attribute doi { text }?, text? } # maybe author, year etc?
 	   )*
 
-mime_t = text
-rel    = "subsumes" | "supersedes" | "uses"
+mime_t = text  # must contain a slash?
+rel    = "subsumes" | "supersedes" | "uses"  # replaces? up(grades|dates)?

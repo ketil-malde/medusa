@@ -38,7 +38,7 @@ test ! -e $DIR/meta.xml || error "$DIR/meta.xml already exists"
 
 cd $DIR
 NAME=`basename "$DIR"`
-echo '<meta id="'$NAME'" version="1">' > meta.xml
+echo '<meta name="'$NAME'">' > meta.xml
 cat >> meta.xml << EOF
 <description>
   ...
@@ -50,11 +50,10 @@ cat >> meta.xml << EOF
 EOF
 
 find . -type f | grep -v meta.xml | while read a; do
-  x=`md5sum "$a"`
-  md5=`echo "$x" | cut -c-32`
+  #  sha1=`checksum "$a"` - add checksums on import
   fpath=`echo "$a" | cut -d/ -f2-`
   echo >> meta.xml '  <file path="'$fpath'"'
-  echo >> meta.xml '        md5="'$md5'"'
+  # echo >> meta.xml '        sha1="'$sha1'"'
   echo -n >> meta.xml '        mimetype="'
   mimetype "$fpath" >> meta.xml
   echo >> meta.xml '">'
@@ -68,4 +67,4 @@ cat >> meta.xml << EOF
 </meta>
 EOF
 
-chmod -w .
+# chmod -w .
