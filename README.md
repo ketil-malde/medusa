@@ -13,9 +13,14 @@ installed, you can get a copy by doing
 
 ## Basic structure
 
-Each data set is a separate subdirectory, containing arbitrary files
-and subdirectories.  A file named `meta.xml` is mandatory, and
-contains the metadata describing the data set.
+The repository is organized as a content adressable storage, where
+objects are indexed by their SHA-1 checksum.  There is in principle no
+limitation on content.
+
+Each data set consists of a set of data objects, and a separate
+metadata object, conforming to the `meta.rnc` schema.  The metadata
+object describes the dataset, its relationship to other datasets, and
+contains a list of data objects.
 
 ## The 'medusa' directory
 
@@ -32,12 +37,14 @@ Supporting files and basic infrastructure:
  * [meta.rnc](meta.rnc) - RelaxNG schema for metadata XML files
  * [mimetypes.txt](mimetypes.txt) - a list of known file types. Note that this is not
    exhaustive, and unknown file type is not an error.
- * [xmlcheck.sh](xmlcheck.sh) - checks the data sets given as command-line parameters
+ * [check.sh](check.sh) - checks the data sets given as command-line parameters
    for consistency and correctness
- * [checkall.sh](checkall.sh) - checks all data sets using xmlcheck.sh, and outputs a
+ * [checkall.sh](checkall.sh) - checks all data sets using `check.sh`, and outputs a
    summary
- * [gen_meta.sh](medusa/gen_meta.sh) - builds a skeleton metadata file for the given
+ * [prepare.sh](prepare.sh) - builds a skeleton metadata file for the given
    dataset, trying to automatically determine file types
+ * [import.sh](import.sh) - calculates SHA-1 hashes, performs some
+   further checks, and prompts the user before importing data into the repository
 
 Services are contained in their own subdirectories in the
 [services](services) directory.  Each subdir contains a script of the
@@ -69,19 +76,18 @@ and the xapian-index search service uses
 ## Adding a dataset
 
 To add a data set, make a new subdirectory, and populate it with the
-files that constitute the dataset.  Then run `gen_meta.sh`.
+files that constitute the dataset.  Then run `mdz prepare`.
 
     mkdir DataSet
     mv [....] DataSet/
-	medusa/gen_meta.sh DataSet
+	mdz prepare DataSet
 	
-You should now have a `meta.xml` file in DataSet.  If you run
-`mdz check DataSet`, you will likely get some warnings.  Now, edit the
-metadata file, and fill in details.  Then check it (again) with
-`mdz check`, and when it passes, you are done as far as the system is
-concerned.
+You should now have a `meta.xml` file in DataSet.  Now, edit the
+metadata file, and fill in details.  When everything is satisfactory,
+you can run `mdz import`, and if everything goes well, the data set is
+imported into the repository.
 
-When `gen_meta.sh` is run, two metadata sections are generated with
+When `mdz prepare` is run, two metadata sections are generated with
 empty (that is, just an ellipsis) contents.  The `<description>`
 section should contain a text describing what the data set _is_, while
 the `<provenance>` section should describe how the data set _came
@@ -120,7 +126,3 @@ The possible values for `rel` is `supersedes`, `subsumes`, and `uses`.
 Currently plain text fields, this is likely to change as more
 structure is added in the future.
 
-## Test dataset
-
-A simple [test dataset](Test/) (aptly, if not imaginatively, named `Test`) is
-also included.
