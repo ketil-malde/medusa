@@ -32,7 +32,8 @@ form of shell scripts.
  * [medusa.conf.example](medusa.conf.example) - Example config file,
    copy to $HOME/.medusa.conf and edit as appropriate.
 
-Supporting files and basic infrastructure:
+Supporting files and basic infrastructure (the shell scripts
+correspond to `mdz` commands):
 
  * [meta.rnc](meta.rnc) - RelaxNG schema for metadata XML files
  * [mimetypes.txt](mimetypes.txt) - a list of known file types. Note that this is not
@@ -45,10 +46,13 @@ Supporting files and basic infrastructure:
    dataset, trying to automatically determine file types
  * [import.sh](import.sh) - calculates SHA-1 hashes, performs some
    further checks, and prompts the user before importing data into the repository
+ * [export.sh](export.sh) - calculates SHA-1 hashes, performs some
+   further checks, and prompts the user before importing data into the repository
 
 Services are contained in their own subdirectories in the
 [services](services) directory.  Each subdir contains a script of the
-same name (plus a ".sh" extension) and optionally configuratoin files.
+same name (plus a ".sh" extension) and optionally supporting or
+configuration files.
 
  * [xapian-index](services/xapian-index/) - builds a generic search index using xapian and
    omega
