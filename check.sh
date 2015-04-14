@@ -34,7 +34,7 @@ for D in "$@"; do
     echo "Checking files..."
     while read f; do
       sha1=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "@sha1" -n "$M")
-      [ -f "$MDZ_DATADIR/$sha1" ] || error "File '$f' (object $sha1) does not exist."
+      [ -f "$(datafile $sha1)" ] || error "File '$f' (object $sha1) does not exist."
       type=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "@mimetype" -n "$M")
       grep -q "^$type\$" $MDZ_DIR/mimetypes.txt || warn "File '$f' has unknown mimetype \"$type\""
       # check format
