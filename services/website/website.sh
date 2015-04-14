@@ -64,12 +64,12 @@ gen_prov(){
 gen_files(){
     echo "<h2>Files</h2>"
     echo "<table><tr><th>Path</th><th>Description</th><th>Type</th><th>checksum</th></tr><tr><th colspan=\"4\"><hr></th></tr>"
-    DEST="$MDZ_WEBSITE_DIR/$MDZ_WEBSITE_DATA_PREFIX"
+    DEST="$MDZ_WEBSITE_DIR/$MDZ_WEBSITE_DATA_PREFIX/$1"
     files "$1" | while read f; do
 	TYPE=$(xmlstarlet sel -t -m "//file[@path='$f']" -v @mimetype -n "$(datafile "$1")")
 	DESC=$(xmlstarlet sel -t -m "//file[@path='$f']" -v "." -n "$(datafile "$1")")
 	CS=$(xmlstarlet  sel -t -m "//file[@path='$f']" -v @sha1 -n "$(datafile "$1")")
-        echo "  <tr> <td><a href=\"/$MDZ_WEBSITE_DATA_PREFIX/$CS\">$f</a></td> <td>$DESC</td> <td>$TYPE</td> <td>$CS</td> </tr>"
+        echo "  <tr> <td><a href=\"/$MDZ_WEBSITE_DATA_PREFIX/$1/$CS\">$f</a></td> <td>$DESC</td> <td>$TYPE</td> <td>$CS</td> </tr>"
 	echo "</tr>"
         ln -fs "$(datafile "$CS")" "$DEST/" || error "Failed to create link - exiting"
     done
