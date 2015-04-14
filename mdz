@@ -30,12 +30,12 @@ usage(){
 
 serve(){
     [ -f "$MDZ_DIR/services/$1/$1.sh" ] || error "No such service: $1"
-    "$MDZ_DIR/services/$1/$1.sh" "${@:2}"
+    source "$MDZ_DIR/services/$1/$1.sh" "${@:2}"
 }
 
 run(){
     [ -f "$MDZ_DIR/run/$1.sh" ] || error "No such command: $1"
-    "$MDZ_DIR/run/$1.sh" "${@:2}"
+    source "$MDZ_DIR/run/$1.sh" "${@:2}"
 }
 
 read_config
@@ -52,26 +52,26 @@ export MDZ_XAPIAN_DIR MDZ_XAPIAN_DB
 
 export MDZ_VIROBLAST_DIR
 
-. "$MDZ_DIR/functions.sh"
+source "$MDZ_DIR/functions.sh"
 
 CMD=$1
 PARAMS="${@:2}"
 
 case $CMD in
   check)
-	$MDZ_DIR/check.sh $PARAMS
+	source $MDZ_DIR/check.sh $PARAMS
   ;;
   checkall)
-	$MDZ_DIR/checkall.sh $PARAMS
+	source $MDZ_DIR/checkall.sh $PARAMS
   ;;
   import)
-	$MDZ_DIR/import.sh $PARAMS
+	source $MDZ_DIR/import.sh $PARAMS
   ;;
   export)
-	$MDZ_DIR/export.sh $PARAMS
+	source $MDZ_DIR/export.sh $PARAMS
   ;;
   prepare)
-	$MDZ_DIR/prepare.sh $PARAMS
+	source $MDZ_DIR/prepare.sh $PARAMS
   ;;
   service)
 	serve $PARAMS

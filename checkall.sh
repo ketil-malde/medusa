@@ -2,7 +2,7 @@
 
 set -u -o pipefail
 shopt -s failglob
-. "$MDZ_DIR/functions.sh"
+source "$MDZ_DIR/functions.sh"
 
 LOG=/tmp/xmlcheck.log
 date > $LOG
@@ -10,7 +10,7 @@ date > $LOG
 note "Checking datasets in $MDZ_DATADIR"
 echo
 for a in $(datasets); do
-     $MDZ_DIR/check.sh "$a"
+     source $MDZ_DIR/check.sh "$a"
      RET=$?
      if [ $RET -eq "0" ]; then
         echo -n "$G$a$N " >> $LOG 
