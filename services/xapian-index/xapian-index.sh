@@ -5,11 +5,11 @@ set -uf -o pipefail
 
 datasets | while read name; do
   echo url="/$MDZ_WEBSITE_DATA_PREFIX/$name"
-  echo name="$name"
   a="$(datafile "$name")"
+  echo name="$(xmlstarlet sel -t -m "//meta" -v "@name" -n "$a")" 
   xmlstarlet sel -t -m "//species" -o "species= " -v "@sciname" -o "     " -v "@tsn" -o "        " -v "." -n "$a" | grep -v '^$'
   xmlstarlet sel -t -m "//file" -o "filetype=" -v "@path" -o "   " -v "@mimetype" -n "$a"  | grep -v '^$'
-  echo "sample=$(xmlstarlet sel -t -m "//description" -v "." "$a")"
+  echo "sample=$(xmlstarlet sel -t -m "//description" -v "." "$a" | tr '\n' ' ')"
   echo
 done | scriptindex -v --overwrite "$MDZ_XAPIAN_DIR/$MDZ_XAPIAN_DB" "$MDZ_DIR/services/xapian-index/index.def"
 
