@@ -52,3 +52,35 @@ files_by_type(){
     assert_is_dataset "$D"
     xmlstarlet sel -t -m "//file[@mimetype='$T']" -v @path -n "$(datafile "$D")" | grep .
 }
+
+buildcache(){
+    C="$MDZ_DATADIR/cache"
+    rm -rf "$C"
+    mkdir "$C"
+    touch "$C/obsolete" "$C/invalid" "$C/all_datasets" "$C/other_rel" "$C/current"
+    set +e
+    datasets | while read d; do
+       echo "**** $d"
+       xmlstarlet sel -t -m "//dataset" -v "@id" -o "	" -v "@rel" -n "$(datafile "$d")" | while read id rel; do
+           echo "**** $rel $id"
+           case "$rel" in
+	       invalidates)
+		   echo "$id	$d" >> "$C/invalid"
+		   ;;
+	       obsoletes)
+		   echo "$d obsoletes $d"
+		   echo "$id	$d" >> "$C/obsolete"
+		   ;;
+	       *)
+		   echo "$id	$d	$rel" >> "$C/other_rel"
+		   ;;
+	   esac
+       done
+       desc="$(xmlstarlet sel -t -m //description -v "." "$(datafile "$d")" | tr '\n' ' ')"
+       name="$(xmlstarlet sel -t -m /meta -v "@name" "$(datafile "$d")")"
+       echo  "$d	$name	$desc" >> "$C/all_datasets"
+    done
+    cut -f1 "$C/all_datasets" | while read d; do
+        grep -q "^$d" "$C/invalid" "$C/obsolete" || echo "$d" >> "$C/current"
+    done
+}

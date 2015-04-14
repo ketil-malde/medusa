@@ -40,4 +40,7 @@ freetext = ( text
 	   )*
 
 mime_t = text  # must contain a slash?
-rel    = "subsumes" | "supersedes" | "uses"  # replaces? up(grades|dates)?
+rel    = "invalidates"  # The dataset must not be used
+       | "obsoletes"    # The dataset should not be used anymore
+       | "basedon"      # This dataset uses data from the referred dataset
+       | "aggregates"   # This dataset includes data from the referred dataset
