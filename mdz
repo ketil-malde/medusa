@@ -58,6 +58,11 @@ CMD=$1
 PARAMS="${@:2}"
 
 case $CMD in
+  list)
+      datasets | while read d; do
+		     echo "$(xmlstarlet sel -t -m "/meta" -v "@name" -n "$(datafile "$d")")	$d"
+		 done
+  ;;    
   check)
 	source $MDZ_DIR/check.sh $PARAMS
   ;;
