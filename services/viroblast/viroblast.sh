@@ -3,7 +3,6 @@ set -u -o pipefail
 shopt -s failglob
 . "$MDZ_DIR/functions.sh"
 
-DIR="$MDZ_DATADIR"
 TARGET_DIR="$MDZ_VIROBLAST_DIR"
 
 [ -d "$TARGET_DIR" ] || mkdir -p "$TARGET_DIR" || error "Viroblast target dir '$TARGET_DIR' does not exist"
@@ -46,7 +45,7 @@ add_prot(){
     if [ -f "$TARGET_DIR/db/protein/$fname" ]; then
 	echo -n
     else
-	(cd "$TARGET_DIR/db/protein/" && ln -fs "$(datafile "$sha1")" . && formatdb $sha1 prot)
+	(cd "$TARGET_DIR/db/protein/" && ln -fs "$(datafile "$sha1")" . && formatdb "$sha1" prot)
     fi
     echo "$sha1 => [$dset] $fdesc (Prot)" >> /tmp/protein
 }
@@ -75,9 +74,9 @@ done
 set -f
 echo > $TARGET_DIR/viroblast.ini "blast+: $TARGET_DIR/blast+/bin/"
 for a in blastn tblastn tblastx; do
-  echo >> $TARGET_DIR/viroblast.ini "$a: "`cat /tmp/nucleotide | tr '\n' ,`
+  echo >> $TARGET_DIR/viroblast.ini "$a: $(tr '\n' , < /tmp/nucleotide)"
 done
 for a in blastp blastx; do
-  echo >> $TARGET_DIR/viroblast.ini "$a: "`cat /tmp/protein | tr '\n' ,`
+  echo >> $TARGET_DIR/viroblast.ini "$a: $(tr '\n' , < /tmp/protein)"
 done
 
