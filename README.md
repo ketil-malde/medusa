@@ -77,6 +77,37 @@ and the xapian-index search service uses
 [`xapian`](http://xapian.org/) and its
 [`omega`](http://xapian.org/docs/omega/overview.html) web interface.
 
+## Setting up
+
+Get the necessary software, on Debian or Ubuntu, something like this
+should do the trick:
+
+    apt-get install xapian-omega xsltproc trang xmlstarlet libapache2-mod-php5
+
+Copy and edit the `medusa.conf.example`, and store it as
+`.medusa.config` in your home directory.
+
+Take ownership of the default directory for the web server - for a
+more complex setup, you will probably want to set up this as a
+separate Apache service:
+
+    sudo chown $USER /var/www/html
+	sudo rm /var/www/html/index.html
+
+Download Viroblast and unpack it in the /var/www/html (or whatever
+directory MDZ_WEBSITE_DIR or MDZ_VIROBLAST_DIR points to).  Note that
+you need to ensure that the `viroblast/data` directory is writable by
+the webserver user.  Viroblast ships with 32-bit versions of the
+BLAST+ suite, so on a 64bit system, you also need to get some
+compatibility stuff:
+
+    sudo apt-get install libc6-i386 libstdc++6:i386 zlib1g:i386 bzip2:i386
+
+Xapian is by default installed in the /usr/lib/cgi-bin directory, but
+you may need to link `mods-available/cgi.load` to `mods-enabled` in the
+Apache config directory.  See also the README file in the
+services/xapian-index directory.
+
 ## Adding a dataset
 
 To add a data set, make a new subdirectory, and populate it with the
