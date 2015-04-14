@@ -30,7 +30,7 @@ usage(){
 
 serve(){
     [ -f "$MDZ_DIR/services/$1/$1.sh" ] || error "No such service: $1"
-    source "$MDZ_DIR/services/$1/$1.sh" "${@:2}"
+    bash "$MDZ_DIR/services/$1/$1.sh" "${@:2}"
 }
 
 run(){
