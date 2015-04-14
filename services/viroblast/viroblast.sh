@@ -3,13 +3,13 @@ set -u -o pipefail
 shopt -s failglob
 . "$MDZ_DIR/functions.sh"
 
-DIR=$MDZ_DATADIR
-TARGET_DIR=$MDZ_VIROBLAST_DIR
+DIR="$MDZ_DATADIR"
+TARGET_DIR="$MDZ_VIROBLAST_DIR"
 
 [ -d "$TARGET_DIR" ] || mkdir -p "$TARGET_DIR" || error "Viroblast target dir '$TARGET_DIR' does not exist"
 
-mkdir -p $TARGET_DIR/db/nucleotide 
-mkdir -p $TARGET_DIR/db/protein 
+mkdir -p "$TARGET_DIR/db/nucleotide"
+mkdir -p "$TARGET_DIR/db/protein" 
 echo -n > /tmp/nucleotide
 echo -n > /tmp/protein
 
@@ -23,49 +23,52 @@ formatdb(){
 # add them (with description) to viroblast.ini
 
 add_nuc(){
-    fpath=`echo "$1" | cut -d '	' -f1`
-    fdesc=`echo "$1" | cut -d '	' -f2 | tr , \;`
-    fname=`basename $fpath`
-    echo "Adding nucleotide file $fpath as [$2] $fdesc"
-    if [ -f $TARGET_DIR/db/nucleotide/$fname ]; then
+    sha1="$1"
+    fpath="$2"
+    fdesc="$3"
+    dset="$4"
+    ftype="$5"
+    echo "Adding nucleotide file $sha1 as [$dset] $fdesc"
+    if [ -f "$TARGET_DIR/db/nucleotide/$sha1" ]; then
 	echo -n
     else
-	(cd $TARGET_DIR/db/nucleotide/ && ln -fs $DIR/$dataset/$fpath . && formatdb $fname nucl)
+	(cd $TARGET_DIR/db/nucleotide/ && ln -fs "$(datafile "$sha1")" . && formatdb "$sha1" nucl)
     fi
-    echo "`basename $fpath` => [$2] $fdesc ($3)" >> /tmp/nucleotide
+    echo "$sha1 => [$dset] $fdesc ($ftype)" >> /tmp/nucleotide
 }
 
 add_prot(){
-    fpath=`echo "$1" | cut -d '	' -f1`
-    fdesc=`echo "$1" | cut -d '	' -f2 | tr , \;`
-    fname=`basename $fpath`
-    echo "Adding protein file $fpath as [$2] $fdesc"
-    if [ -f $TARGET_DIR/db/protein/$fname ]; then
+    sha1="$1"
+    fpath="$2"
+    fdesc="$3"
+    dset="$4"
+    echo "Adding protein file $sha1 as [$dset] $fdesc"
+    if [ -f "$TARGET_DIR/db/protein/$fname" ]; then
 	echo -n
     else
-	(cd $TARGET_DIR/db/protein/ && ln -fs $DIR/$dataset/$fpath . && formatdb $fname prot)
+	(cd "$TARGET_DIR/db/protein/" && ln -fs "$(datafile "$sha1")" . && formatdb $sha1 prot)
     fi
-    echo "`basename $fpath` => [$2] $fdesc (Prot)" >> /tmp/protein
+    echo "$sha1 => [$dset] $fdesc (Prot)" >> /tmp/protein
 }
 
 filter(){
   grep -v '^[ 	]*$' |  sed 'N;s/	\n[ 	]*/	/g'
 }
 
-for x in "$(datasets)"; do
+datasets | while read x; do
   a="$(datafile "$x")"
   dataset="$(xmlstarlet sel -t -m /meta -v "@name" -n "$a")"
 
-  xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-dna']" -v @path -o "	" -v "." -n $a | filter | while read rec; do
-    add_nuc "$rec" "$dataset" "DNA"
+  xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-dna']" -v @sha1 -o "	" -v @path -o "	" -v "." -n "$a" | filter | while read cs path desc; do
+    add_nuc "$cs" "$path" "$desc" "$dataset" "DNA"
   done
 
-  xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-rna']" -v @path -o "	" -v "." -n $a | filter | while read rec; do
-    add_nuc "$rec" "$dataset" "RNA"
+  xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-rna']" -v @sha1 -o "	" -v @path -o "	" -v "." -n "$a" | filter | while read cs path desc; do
+    add_nuc "$cs" "$path" "$desc" "$dataset" "DNA"
   done
 
-  xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-prot']" -v @path -o "	" -v "." -n $a | filter | while read rec; do
-    add_prot "$rec" "$dataset" 
+  xmlstarlet sel -t -m "//file[@mimetype='text/x-fasta-prot']" -v @sha1 -o "	" -v @path -o "	" -v "." -n "$a" | filter | while read cs path desc; do
+    add_prot "$cs" "$path" "$desc" "$dataset" 
   done
 done
 
