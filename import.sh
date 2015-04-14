@@ -77,12 +77,17 @@ while read f s; do
     if [ -f "$(datafile "$s")" ]; then
 	warn "$s already exists - ignoring import of $f"
     else
-	cp "$D/$f" "$(datafile "$s")"
+	tgt="$(datafile "$s")"
+	[ -d "$(dirname "$tgt")" ] || mkdir -p "$(dirname "$tgt")"
+	cp "$D/$f" "$tgt"
+	chmod 0444 "$tgt"
     fi
 done < <(xmlstarlet sel -t -m "//file" -v "@path" -o "	" -v "@sha1" -n tmp.xml)
 
 # Finally copy the metadata file to its checksum ID
 echo "Importing metadata file"
-mv tmp.xml "$(datafile "$sha1")"
+tgt="$(datafile "$sha1")"
+[ -d "$(dirname "$tgt")" ] || mkdir -p "$(dirname "$tgt")"
+mv tmp.xml "$tgt"
 echo "done!"
 
