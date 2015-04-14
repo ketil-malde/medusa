@@ -62,12 +62,13 @@ sha1="$(checksum tmp.xml)"
 
 # Done: on warning, ask for confirmation
 if [ ! "$WARN" -eq "0" ]; then
-    echo -n "Warnings occurred, still proceed with import (y/n)? "
-    read a
-    if [ ! "$a" = "y" ]; then
-	echo "OK, aborting!"
-	exit 0
-    fi
+    warn "Warnings occurred!"
+fi
+echo "Proceed with import (y/n)? "
+read a
+if [ ! "$a" = "y" ]; then
+    echo "OK, aborting!"
+    exit 0
 fi
 
 echo "Importing..."
