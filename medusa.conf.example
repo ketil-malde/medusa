@@ -23,7 +23,7 @@ MDZ_DATADIR=/data/
 
 # Service: website
 # Where to put the web presentation:
-MDZ_WEBSITE_DIR=/var/www
+MDZ_WEBSITE_DIR=/var/www/html
 MDZ_WEBSITE_DATA_PREFIX=data
 
 # Service: xapian search engine
@@ -33,4 +33,4 @@ MDZ_XAPIAN_DB=medusa
 
 # Service: viroblast
 # Where viroblast lives:
-MDZ_VIROBLAST_DIR=/var/www/viroblast
+MDZ_VIROBLAST_DIR=$MDZ_WEBSITE_DIR/viroblast
