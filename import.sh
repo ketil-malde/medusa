@@ -91,4 +91,6 @@ tgt="$(datafile "$sha1")"
 [ -d "$(dirname "$tgt")" ] || mkdir -p "$(dirname "$tgt")"
 mv tmp.xml "$tgt"
 echo "done!"
+mkdir -p "$MDZ_DATADIR/logs"
+echo "$(date -I)	$sha1" >> "$MDZ_DATADIR/logs/imports"
 
