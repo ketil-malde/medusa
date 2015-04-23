@@ -78,6 +78,12 @@ case $CMD in
   prepare)
 	source $MDZ_DIR/prepare.sh $PARAMS
   ;;
+  send)
+        source $MDZ_DIR/send.sh $PARAMS
+	;;
+  receive)
+        source $MDZ_DIR/receive.sh $PARAMS
+	;;
   service)
 	serve $PARAMS
   ;;
