@@ -8,7 +8,8 @@ tar zxf -
 # check contents
 for f in $(ls); do
     is_valid_id "$f" || error "Not a valid data id: $f"
-    [ -f "$(datafile "$f")" ] && warn "Data object $f is already present - ignoring"
+    tgt="$(datafile "$f")"
+    [ -f "$tgt" ] && warn "Object $f is already present - ignoring"
     if test "$(head -c 5 "$f")" = "<?xml" && test "$(tail -n +2 "$f" | head -c 5)" = "<meta"; then
 	# is a metadata object
 	echo "Received dataset: $f"
@@ -18,18 +19,18 @@ for f in $(ls); do
 	    while read x; do
 		echo -n " $x"
 		[ -f "$x" ] || error "Dataset $f refers object $x, but it is not present"
-		[ "$(checksum "$x")" = "$x" ] || error "Checksum failed for $x"
+		[ -f "$tgt" ] || [ "$(checksum "$x")" = "$x" ] || error "Checksum failed for $x"
 	    done
 	echo "."
     fi
 done
 
 ## ask for confirmation - only if non-interactive
-echo "Importing..."
+echo -n "Importing..."
 # import into repository
 for f in $(ls); do
-    echo "Importing object $f..."
     t="$(datafile "$f")"
     [ -f "$t" ] || mv "$f" "$t"
 done
 cd .. && rm -rf "$DIR"
+echo "done!"
