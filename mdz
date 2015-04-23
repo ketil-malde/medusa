@@ -60,8 +60,8 @@ PARAMS="${@:2}"
 case $CMD in
   list)
       datasets | while read d; do
-		     echo "$(xmlstarlet sel -t -m "/meta" -v "@name" -n "$(datafile "$d")")	$d"
-		 done
+		     echo "$d	$(xmlstarlet sel -t -m "/meta" -v "@name" "$(datafile "$d")")	$(xmlstarlet sel -t -m "//description" -v "." "$(datafile "$d")" | tr '\n' ' ' | cut -c-50)"
+		 done | if [ -z "$PARAMS" ]; then cat; else grep "$PARAMS"; fi
   ;;    
   check)
 	source $MDZ_DIR/check.sh $PARAMS
