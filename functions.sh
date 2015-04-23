@@ -38,7 +38,7 @@ datasets(){
     find "$MDZ_DATADIR" -type f | while read f; do if is_dataset "$(basename "$f")"; then basename "$f"; fi; done
 }
 
-# list all files in a dataset
+# list all files (by path) in a dataset
 files(){
     D="$1"
     assert_is_dataset "$D"

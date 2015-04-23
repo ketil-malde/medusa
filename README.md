@@ -152,9 +152,9 @@ plain text, but a required attribute must point to the dataset ID
 (i.e. its directory name), and an optional attribute describes the
 kind of relationship. For example:
 
-    ...replaces the <dataset id="LSalSFF" rel="supersedes">454 libraries</dataset>...
+    ...replaces the <dataset id="1234567890abcdef" rel="obsoletes">454 libraries</dataset>...
 
-The possible values for `rel` is `supersedes`, `subsumes`, and `uses`.
+The possible values for `rel` are defined in the schema file `meta.rnc`.
 
 ### Person and location
 
