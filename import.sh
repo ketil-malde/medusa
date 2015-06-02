@@ -67,6 +67,10 @@ mv tmp2.xml tmp.xml
 xmlstarlet ed -i "/meta" -t attr -n "imported-by" -v "$myuser" tmp.xml > tmp2.xml
 mv tmp2.xml tmp.xml
 
+# Delete md5 sums (backwards compat to old versions)
+xmlstarlet ed -d "//file/@md5" tmp.xml > tmp2.xml
+mv tmp2.xml tmp.xml
+
 # Validate format
 xmlstarlet val -e -r "$MDZ_DIR/meta.rng" tmp.xml || error "$D failed to validate."
 
