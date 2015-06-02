@@ -1,6 +1,8 @@
 start = element meta 
-    { attribute name { text }        # should be descriptive short form
+    { attribute name { text }          # should be descriptive short form
     , attribute obsoletes { hash }?    # if this is an update to an existing dataset
+    , attribute imported-at { date }   # data for import, automatically added
+    , attribute imported-by { text }   # user@machine - may change later
     , description?
     , provenance?
     , contents
@@ -40,7 +42,10 @@ freetext = ( text
 	   )*
 
 mime_t = text  # must contain a slash?
+
 rel    = "invalidates"  # The dataset must not be used
        | "obsoletes"    # The dataset should not be used anymore
        | "basedon"      # This dataset uses data from the referred dataset
        | "aggregates"   # This dataset includes data from the referred dataset
+
+date = xsd:string { pattern = "[12][90][0-9][0-9]-[0-9][0-9]-[0-9][0-9]" }
