@@ -67,8 +67,8 @@ mv tmp2.xml tmp.xml
 xmlstarlet ed -i "/meta" -t attr -n "imported-by" -v "$myuser" tmp.xml > tmp2.xml
 mv tmp2.xml tmp.xml
 
-# Delete md5 sums (backwards compat to old versions)
-xmlstarlet ed -d "//file/@md5" tmp.xml > tmp2.xml
+# Delete md5 sums (backwards compat to old versions) and id, insert name attribute.
+xmlstarlet ed -d "//file/@md5" tmp.xml | xmlstarlet ed -d "//meta/@id" | xmlstarlet ed -i "/meta" -t attr -n "name" -v "$D" > tmp2.xml
 mv tmp2.xml tmp.xml
 
 # Validate format
