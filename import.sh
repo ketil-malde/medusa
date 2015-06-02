@@ -34,8 +34,14 @@ grep -q '^  *\.\.\.$' "$M" && warn "meta.xml seems incomplete - please fill in d
 cp "$M" tmp.xml
 while read f t; do
     echo "Processing file $f"
-    echo "  ...calculating hash"
-    sha1="$(checksum "$D/$f")"
+    if test "$D/$f.sha1" -nt "$D/$f"; then
+	echo "  ...using precalculated hash"
+	sha1="$(cat "$D/$f.sha1")"
+    else
+	echo "  ...calculating hash"
+	sha1="$(checksum "$D/$f")"
+	echo "$sha1" > "$D/$f.sha1"
+    fi
     xmlstarlet ed -i "//file[@path='$f']" -t attr -n "sha1" -v "$sha1" tmp.xml > tmp2.xml
     mv tmp2.xml tmp.xml
     if [ -f "$(datafile "$sha1")" ]; then
