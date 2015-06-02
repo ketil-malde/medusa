@@ -59,16 +59,15 @@ done < <(xmlstarlet sel -t -m "//dataset" -v "@id" -n "$M")
 
 # Check for dataset with same name (and no parentage)
 
+# Delete md5 sums (backwards compat to old versions) and id, insert name attribute.
 # Add imported-* fields
 mydate="$(date -I)"
 myuser="$(whoami)@$(hostname)"
-xmlstarlet ed -i "/meta" -t attr -n "imported-at" -v "$mydate" tmp.xml > tmp2.xml
-mv tmp2.xml tmp.xml
-xmlstarlet ed -i "/meta" -t attr -n "imported-by" -v "$myuser" tmp.xml > tmp2.xml
-mv tmp2.xml tmp.xml
-
-# Delete md5 sums (backwards compat to old versions) and id, insert name attribute.
-xmlstarlet ed -d "//file/@md5" tmp.xml | xmlstarlet ed -d "//meta/@id" | xmlstarlet ed -i "/meta" -t attr -n "name" -v "$D" > tmp2.xml
+xmlstarlet ed \
+	   -d "//file/@md5" -d "/meta/@id" -d "/meta/@version" \
+	   -i "/meta" -t attr -n "imported-at" -v "$mydate" \
+	   -i "/meta" -t attr -n "imported-by" -v "$myuser" \
+	   -i "/meta" -t attr -n "name"        -v "$D" tmp.xml > tmp2.xml
 mv tmp2.xml tmp.xml
 
 # Validate format
