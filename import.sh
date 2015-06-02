@@ -59,7 +59,15 @@ done < <(xmlstarlet sel -t -m "//dataset" -v "@id" -n "$M")
 
 # Check for dataset with same name (and no parentage)
 
-# Populate xml with sha1 checksums, then:
+# Add imported-* fields
+mydate="$(date -I)"
+myuser="$(whoami)@$(hostname)"
+xmlstarlet ed -i "/meta" -t attr -n "imported-at" -v "$mydate" tmp.xml > tmp2.xml
+mv tmp2.xml tmp.xml
+xmlstarlet ed -i "/meta" -t attr -n "imported-by" -v "$myuser" tmp.xml > tmp2.xml
+mv tmp2.xml tmp.xml
+
+# Validate format
 xmlstarlet val -e -r "$MDZ_DIR/meta.rng" tmp.xml || error "$D failed to validate."
 
 # Abort if metadata already exists
