@@ -64,7 +64,7 @@ done < <(xmlstarlet sel -t -m "//dataset" -v "@id" -n "$M")
 mydate="$(date -I)"
 myuser="$(whoami)@$(hostname)"
 xmlstarlet ed \
-	   -d "//file/@md5" -d "/meta/@id" -d "/meta/@version" \
+	   -d "//file/@md5" -d "/meta/@id" -d "/meta/@version" -d "/meta/@status" \
 	   -i "/meta" -t attr -n "imported-at" -v "$mydate" \
 	   -i "/meta" -t attr -n "imported-by" -v "$myuser" \
 	   -i "/meta" -t attr -n "name"        -v "$D" tmp.xml > tmp2.xml
