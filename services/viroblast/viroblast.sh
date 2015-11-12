@@ -21,6 +21,11 @@ formatdb(){
 # link them to target_dir
 # add them (with description) to viroblast.ini
 
+# can't use commas in description
+quote(){
+	echo $* | tr , -
+}
+
 add_nuc(){
     sha1="$1"
     fpath="$2"
@@ -33,7 +38,7 @@ add_nuc(){
     else
 	(cd $TARGET_DIR/db/nucleotide/ && ln -fs "$(datafile "$sha1")" . && formatdb "$sha1" nucl)
     fi
-    echo "$sha1 => [$dset] $fdesc ($ftype)" >> /tmp/nucleotide
+    echo "$sha1 => [$dset] $(quote "$fdesc") ($ftype)" >> /tmp/nucleotide
 }
 
 add_prot(){
@@ -42,12 +47,12 @@ add_prot(){
     fdesc="$3"
     dset="$4"
     echo "Adding protein file $sha1 as [$dset] $fdesc"
-    if [ -f "$TARGET_DIR/db/protein/$fname" ]; then
+    if [ -f "$TARGET_DIR/db/protein/$sha1" ]; then
 	echo -n
     else
 	(cd "$TARGET_DIR/db/protein/" && ln -fs "$(datafile "$sha1")" . && formatdb "$sha1" prot)
     fi
-    echo "$sha1 => [$dset] $fdesc (Prot)" >> /tmp/protein
+    echo "$sha1 => [$dset] $(quote "$fdesc") (Prot)" >> /tmp/protein
 }
 
 filter(){
