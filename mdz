@@ -96,6 +96,8 @@ case $CMD in
 	cat <<EOF
 Available commands:
 
+  list     - list datasets with ID, name, and short description
+             optionally limiting output with a search expression
   check    - check a dataset for correctness
   checkall - check all datasets
   import   - import a dataset into repository
