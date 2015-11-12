@@ -67,7 +67,7 @@ xmlstarlet ed \
 	   -d "//file/@md5" -d "/meta/@id" -d "/meta/@version" -d "/meta/@status" \
 	   -i "/meta" -t attr -n "imported-at" -v "$mydate" \
 	   -i "/meta" -t attr -n "imported-by" -v "$myuser" \
-	   -i "/meta" -t attr -n "name"        -v "$D" tmp.xml > tmp2.xml
+	   -d "/meta/@name" -i "/meta" -t attr -n "name"        -v "$D" tmp.xml > tmp2.xml
 mv tmp2.xml tmp.xml
 
 # Validate format
