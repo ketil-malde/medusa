@@ -82,7 +82,7 @@ case $CMD in
         source $MDZ_DIR/send.sh $PARAMS
 	;;
   receive)
-        source $MDZ_DIR/receive.sh $PARAMS
+        source $MDZ_DIR/receive.sh $PARAMS  # does this accept parameters?
 	;;
   service)
 	serve $PARAMS
@@ -98,12 +98,18 @@ Available commands:
 
   list     - list datasets with ID, name, and short description
              optionally limiting output with a search expression
-  check    - check a dataset for correctness
-  checkall - check all datasets
   import   - import a dataset into repository
   export   - extract a dataset from repository
   prepare  - generate metadata for a dataset for import
 
+  check    - check a dataset for correctness
+  checkall - check all datasets
+ 
+  send     - package a dataset for export to external repository
+             and write it to stdout
+  receive  - read a packaged dataset from stdin, and import it
+             into local repository
+ 
   service <serv> - service specific commmands
   run <cmd>      - run pipeline to generate new datasets
 EOF
