@@ -1,8 +1,17 @@
-R="$(tput setaf 1)"
-G="$(tput setaf 2)"
-Y="$(tput setaf 3)"
-C="$(tput setaf 6)"
-N="$(tput sgr0)"
+
+if [ -z ${TERM+x} ]; then
+   R="$(tput setaf 1)"
+   G="$(tput setaf 2)"
+   Y="$(tput setaf 3)"
+   C="$(tput setaf 6)"
+   N="$(tput sgr0)"
+else
+   R=
+   G=
+   Y=
+   C=
+   N=
+fi
 
 error(){
     echo >&2 "${R}Error:${N} $@"
