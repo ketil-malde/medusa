@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DIR=$(mktemp -d "./mdz_recv_XXXX")
+DIR=$(mktemp -d "$MDZ_DATADIR/mdz_recv_XXXX")
 
 cd "$DIR"
 tar zxf -
