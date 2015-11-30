@@ -27,7 +27,7 @@ note(){
 }
 
 checksum(){
-    openssl sha1 -r "$@" | cut -c-40
+    openssl sha1 "$@" | sed -e 's/^.*= //g'
     }
 
 is_valid_id() { [[ $1 =~ ^[0-9a-f]{40}$ ]]; }
