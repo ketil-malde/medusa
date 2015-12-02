@@ -30,6 +30,7 @@ echo -n "Importing..."
 # import into repository
 for f in $(ls); do
     t="$(datafile "$f")"
+    [ -d "$(dirname "$t")" ] || mkdir -p "$(dirname "$t")"
     [ -f "$t" ] || mv "$f" "$t"
 done
 cd .. && rm -rf "$DIR"
