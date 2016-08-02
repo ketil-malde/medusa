@@ -179,6 +179,8 @@ build_species_lists(){
     done
 }
 
+# Build cache
+buildcache
 
 # Build the front page
 [ -d "$MDZ_WEBSITE_DIR" ] || mkdir -p "$MDZ_WEBSITE_DIR" || error "Website dir doesn't exist, and I couldn't create it."
