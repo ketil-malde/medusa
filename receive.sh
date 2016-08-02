@@ -14,6 +14,7 @@ for f in $(ls); do
 	# is a metadata object
 	echo "Received dataset: $f"
 	[ "$(checksum "$f")" = "$f" ] || error "Checksum failed for $f"	
+	xmlstarlet val -e -r "$MDZ_DIR/meta.rng" "$f" || error "$f failed to validate."
 	echo -n "Contents: "
 	xmlstarlet sel -t -m //file -v "@sha1" -n "$f" | grep . | \
 	    while read x; do
