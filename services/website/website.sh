@@ -187,7 +187,7 @@ buildcache
 htmlhead "Medusa Data Repository" > "$MDZ_WEBSITE_DIR/medusa.html" || error "Couldn't create front page - exiting"
 cat "$MDZ_DIR/services/website/index_template.html" >> "$MDZ_WEBSITE_DIR/medusa.html"
 htmlfoot >> "$MDZ_WEBSITE_DIR/medusa.html"
-[ -f "$MDZ_WEBSITE_DIR/index.html ] || ln -s "$MDZ_WEBSITE_DIR/medusa.html" "$MDZ_WEBSITE_DIR/index.html"
+[ -f "$MDZ_WEBSITE_DIR/index.html" ] || ln -s "$MDZ_WEBSITE_DIR/medusa.html" "$MDZ_WEBSITE_DIR/index.html"
 
 # Build directories
 mkdir -p "$path" "$MDZ_WEBSITE_DIR/TSN" "$MDZ_WEBSITE_DIR/css" || error "Failed to make directory - exiting"
