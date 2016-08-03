@@ -30,7 +30,7 @@ htmlhead(){
     echo "<html><head><title>$1</title>"
     cat <<EOF
       <link rel="shortcut icon" href="/images/favicon.jpg" />
-      <link rel="stylesheet" type="text/css" href="/css/default.css" />
+      <link rel="stylesheet" type="text/css" href="/css/medusa.css" />
       <meta charset="UTF-8">
     </head>
     <body>
@@ -190,13 +190,13 @@ htmlfoot >> "$MDZ_WEBSITE_DIR/index.html"
 
 # Build directories
 mkdir -p "$path" "$MDZ_WEBSITE_DIR/TSN" "$MDZ_WEBSITE_DIR/css" || error "Failed to make directory - exiting"
-cp "$MDZ_DIR/services/website/default.css" "$MDZ_WEBSITE_DIR/css/"
+cp "$MDZ_DIR/services/website/medusa.css" "$MDZ_WEBSITE_DIR/css/"
 
 cat > "$path/HEADER.html" << EOF
 <html>
   <head>      
   <link rel="shortcut icon" href="/images/favicon.jpg" />
-      <link rel="stylesheet" type="text/css" href="/css/default.css" />
+      <link rel="stylesheet" type="text/css" href="/css/medusa.css" />
     </head>
     <body>
 EOF
