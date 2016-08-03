@@ -184,9 +184,10 @@ buildcache
 
 # Build the front page
 [ -d "$MDZ_WEBSITE_DIR" ] || mkdir -p "$MDZ_WEBSITE_DIR" || error "Website dir doesn't exist, and I couldn't create it."
-htmlhead "Medusa Data Repository" > "$MDZ_WEBSITE_DIR/index.html" || error "Couldn't create front page - exiting"
-cat "$MDZ_DIR/services/website/index_template.html" >> "$MDZ_WEBSITE_DIR/index.html" 
-htmlfoot >> "$MDZ_WEBSITE_DIR/index.html" 
+htmlhead "Medusa Data Repository" > "$MDZ_WEBSITE_DIR/medusa.html" || error "Couldn't create front page - exiting"
+cat "$MDZ_DIR/services/website/index_template.html" >> "$MDZ_WEBSITE_DIR/medusa.html"
+htmlfoot >> "$MDZ_WEBSITE_DIR/medusa.html"
+[ -f "$MDZ_WEBSITE_DIR/index.html ] || ln -s "$MDZ_WEBSITE_DIR/medusa.html" "$MDZ_WEBSITE_DIR/index.html"
 
 # Build directories
 mkdir -p "$path" "$MDZ_WEBSITE_DIR/TSN" "$MDZ_WEBSITE_DIR/css" || error "Failed to make directory - exiting"
