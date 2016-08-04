@@ -214,7 +214,7 @@ for name in $(datasets); do
     echo "Processing ${name}..."
     mkdir -p "$path/$name"
     gen_index "$name" > "$path/$name/index.html"
-    echo "AddDescription \"$(xmlstarlet sel -t -m "/meta" -v "@name" "$(datafile "$1")" || true)\" $name" >> "$path/.htaccess"
+    echo "AddDescription \"$(xmlstarlet sel -t -m "/meta" -v "@name" "$(datafile "$name")" || true)\" $name" >> "$path/.htaccess"
     extract_species "$name" >> "$TMP_ST"
 done
 
