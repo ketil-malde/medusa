@@ -206,10 +206,12 @@ echo "<div id=\"header\"><h1>List of data sets</h1></div>" >> "$path/HEADER.html
 
 # Iterate over all data sets, actually building the site
 rm -f "$TMP_ST"
+rm -f "$path/.htaccess"
 for name in $(datasets); do 
     echo "Processing ${name}..."
     mkdir -p "$path/$name"
     gen_index "$name" > "$path/$name/index.html"
+    echo "AddDescription \"$(xmlstarlet sel -t -m "/meta" -v "@name" "$(datafile "$1")" || true)\" $name" >> "$path/.htaccess"
     extract_species "$name" >> "$TMP_ST"
 done
 
