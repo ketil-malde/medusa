@@ -36,6 +36,7 @@ htmlhead(){
     <body>
 EOF
     htmlnavbar
+    echo "<div id=\"icon\"><img src=\"/medusa-icon.png\"/></div>"
     echo "<div id=\"header\"><h1>$1</h1></div>"
     echo "<div id=\"main\">"
 }
@@ -192,6 +193,7 @@ htmlfoot >> "$MDZ_WEBSITE_DIR/medusa.html"
 # Build directories
 mkdir -p "$path" "$MDZ_WEBSITE_DIR/TSN" "$MDZ_WEBSITE_DIR/css" || error "Failed to make directory - exiting"
 cp "$MDZ_DIR/services/website/medusa.css" "$MDZ_WEBSITE_DIR/css/"
+cp "$MDZ_DIR/services/website/medusa-icon.png" "$MDZ_WEBSITE_DIR/"
 
 cat > "$path/HEADER.html" << EOF
 <html>
@@ -202,6 +204,7 @@ cat > "$path/HEADER.html" << EOF
     <body>
 EOF
 htmlnavbar >> "$path/HEADER.html"
+echo "<div id=\"icon\"><img src=\"/medusa-icon.png\"/></div>" >> "$path/HEADER.html"
 echo "<div id=\"header\"><h1>List of data sets</h1></div>" >> "$path/HEADER.html"
 
 # Iterate over all data sets, actually building the site

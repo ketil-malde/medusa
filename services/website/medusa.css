@@ -77,6 +77,9 @@ div#header h1 {
    padding: 0.2em 3em;
 }
 
+div#icon {
+	float: right;   
+}
 .error {
    color: #C00;
 }
