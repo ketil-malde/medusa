@@ -41,10 +41,17 @@ is_dataset(){
 assert_is_dataset(){ is_dataset "$1" || error "'$1' is not a valid dataset."; }
 
 # get path to object
-datafile(){ echo "$MDZ_DATADIR/${1:0:3}/$1"; }
+datafile(){ is_valid_id "$1" && echo "$MDZ_DATADIR/${1:0:3}/$1" || error "Invalid object id: $1"; }
 
 datasets(){
     find "$MDZ_DATADIR" -type f | while read f; do if is_dataset "$(basename "$f")"; then basename "$f"; fi; done
+}
+
+# list all files (by id, sha1 checksum) in a dataset
+fileids(){
+    D="$1"
+    assert_is_dataset "$D"
+    xmlstarlet sel -t -m //file -v @sha1 -n "$(datafile "$D")" | grep .
 }
 
 # list all files (by path) in a dataset
