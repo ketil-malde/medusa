@@ -33,11 +33,6 @@ serve(){
     bash "$MDZ_DIR/services/$1/$1.sh" "${@:2}"
 }
 
-run(){
-    [ -f "$MDZ_DIR/run/$1.sh" ] || error "No such command: $1"
-    source "$MDZ_DIR/run/$1.sh" "${@:2}"
-}
-
 read_config
 
 # Set up defaults:
@@ -87,9 +82,6 @@ case $CMD in
   service)
 	serve $PARAMS
   ;;
-  run)
-	run $PARAMS
-  ;;
   --help)
 	usage
         echo
@@ -111,10 +103,9 @@ Available commands:
              into local repository
  
   service <serv> - service specific commmands
-  run <cmd>      - run pipeline to generate new datasets
+
 EOF
   echo "Available services: " $(ls $MDZ_DIR/services)
-  echo "Available commands: " $(ls $MDZ_DIR/run/ | grep '\.sh$' | sed -e 's/\.sh$//g')
   ;;
   *)
  	usage
