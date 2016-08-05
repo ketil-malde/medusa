@@ -115,7 +115,7 @@ gen_index(){
     if test ! -z "$REFS"; then
        echo "<h2>References</h2><ul>"
        echo "$REFS"
-       echo "</h2>"
+       echo "</ul>"
     fi
     htmlfoot
 }
