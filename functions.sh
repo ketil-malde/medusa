@@ -34,8 +34,7 @@ is_valid_id() { [[ $1 =~ ^[0-9a-f]{40}$ ]]; }
 
 # find all dataset objects
 is_dataset(){
-    f="$(datafile "$1")"
-    [ -f "$f" ] && is_valid_id "$1" && test "$(head -c 5 "$f")" = "<?xml" && test "$(tail -n +2 "$f" | head -c 5)" = "<meta"
+    is_valid_id "$1" && [ -f "$(datafile "$1")" ] && test "$(head -c 5 "$f")" = "<?xml" && test "$(tail -n +2 "$f" | head -c 5)" = "<meta"
 }
 
 assert_is_dataset(){ is_dataset "$1" || error "'$1' is not a valid dataset."; }
